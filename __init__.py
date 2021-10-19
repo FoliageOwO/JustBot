@@ -5,7 +5,7 @@ from JustBot.events import GroupMessageEvent, PrivateMessageEvent
 from JustBot.handlers import MessageHandler, SenderHandler
 from JustBot.matchers import CommandMatcher, KeywordsMatcher
 from JustBot.objects import Friend, Group, Member
-from JustBot.utils import Logger
+from JustBot.utils import Logger, MatcherUtil
 from JustBot.application import BotApplication
 from JustBot.exceptions import StatusError, InternalError, NoContact, InvalidFunctionType
 
