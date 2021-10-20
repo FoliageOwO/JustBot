@@ -115,18 +115,26 @@ class Utils:
         return mapping[key](**kwargs) if key in mapping.keys() else None
 
     @staticmethod
-    def format_unsupported_display(code: str):
+    def format_unsupported_display(code: str, colored: bool = False, color: str = 'bold yellow'):
         """
         将为支持的完整的 CQ 码转换为暂时字符串
 
         >>> Utils.format_unsupported_display('[CQ:image,file=xxx,url=yyy]')
         '[|image:xxx:yyy]'
+        >>> Utils.format_unsupported_display('[CQ:image,file=xxx,url=yyy]', colored=True)
+        '[bold yellow][|image:xxx:yyy][/bold yellow]'
+        >>> Utils.format_unsupported_display('[CQ:image,file=xxx,url=yyy]', colored=True, color='red')
+        '[red][|image:xxx:yyy][/red]'
 
         :param code: 暂未支持的完整的 CQ 码
+        :param colored: 是否转换成带颜色的字符串
+        :param color: 字符串颜色 [默认 'bold yellow']
         :return: 字符串
         """
         removed_code = Utils.remove_brackets(code)
-        return Utils.format_display('|' + removed_code.split(',')[0].split(':')[1],
+        result = '|' + removed_code.split(',')[0].split(':')[1]
+        result = f'[{color}]{result}[/{color}]' if colored else result
+        return Utils.format_display(result,
                                     *tuple(Utils.to_mapping(removed_code).values()))
 
     @staticmethod

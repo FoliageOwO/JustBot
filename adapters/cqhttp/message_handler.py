@@ -24,7 +24,7 @@ class CQHTTPMessageHandler:
             if search_result:
                 group = search_result.group()
                 element = ElementsUtils.get_element_by_code(group)
-                replacement = element.as_display() if element else ElementsUtils.format_unsupported_display(group)
+                replacement = ElementsUtils.as_colored_display(element) if element else ElementsUtils.format_unsupported_display(group, colored=True)
                 message = message.replace(group, replacement)
                 colored_message = colored_message.replace(group, f'[bold yellow]{replacement}[/bold yellow]')
             else:
