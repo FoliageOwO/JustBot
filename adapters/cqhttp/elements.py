@@ -9,12 +9,14 @@ class Utils:
         """
         将完整的 CQ 码 ``code`` 中的最前和最后的 ``中括号`` 删除
 
+        >>> from JustBot.adapters.cqhttp.elements import Utils
         >>> Utils.remove_brackets('[CQ:face,id=174]')
         'CQ:face,id=174'
 
         :param code: 完整的 CQ 码
         :return: 删除后的字符串
         """
+
         return code[1:-1]
 
     @staticmethod
@@ -22,6 +24,7 @@ class Utils:
         """
         将去除中括号后的 CQ 码 ``code`` 中的参数转换为 ``dict``
 
+        >>> from JustBot.adapters.cqhttp.elements import Utils
         >>> Utils.to_mapping('CQ:face,id=174')
         >>> # 等价于 Utils.to_mapping(Utils.remove_brackets('[CQ:face,id=174]'))
         {'id': '174'}
@@ -29,6 +32,7 @@ class Utils:
         :param code: 去除中括号后的 CQ 码
         :return: CQ 码中的参数组成的字典
         """
+
         mapping = {}
         for i in code.split(',')[1:]:
             k = i.split('=')
@@ -41,6 +45,7 @@ class Utils:
         """
         将参数值从完整的 CQ 码 ``code`` 中剥离出来
 
+        >>> from JustBot.adapters.cqhttp.elements import Utils
         >>> Utils.get('[CQ:face,id=174]', 'id')
         '174'
 
@@ -48,6 +53,7 @@ class Utils:
         :param name: 参数名
         :return: 获取的参数值
         """
+
         mapping = Utils.to_mapping(Utils.remove_brackets(code).split(',')[1])
         return mapping[name] if name in mapping.keys() else None
 
@@ -56,6 +62,7 @@ class Utils:
         """
         将传入的 CQ 码名称 ``name`` 和 ``kwargs`` 参数拼合成一个完整的 CQ 码
 
+        >>> from JustBot.adapters.cqhttp.elements import Utils
         >>> Utils.format_code('face', id=174)
         '[CQ:face,id=174]'
 
@@ -63,6 +70,7 @@ class Utils:
         :param kwargs: CQ 码中的参数
         :return: 完整的 CQ 码
         """
+
         string = ''
         for k in kwargs.keys():
             v = kwargs[k]
@@ -75,6 +83,7 @@ class Utils:
         """
         将传入的 CQ 码对应的名称 ``name`` 和 ``args`` 参数拼合成一个可读的字符串
 
+        >>> from JustBot.adapters.cqhttp.elements import Utils
         >>> Utils.format_display('表情', 174)
         '[表情:174]'
 
@@ -82,6 +91,7 @@ class Utils:
         :param args: 字符串中的参数
         :return: 可读的字符串
         """
+
         string = ''
         for i in args:
             if i:
@@ -95,6 +105,7 @@ class Utils:
 
         如果该 ``code`` 暂未支持将会返回 ``None``
 
+        >>> from JustBot.adapters.cqhttp.elements import Utils
         >>> face = Utils.get_element_by_code('[CQ:face,id=174]')
         >>> face
         <JustBot.adapters.cqhttp.elements.Face object at 0x0000000002121880>
@@ -107,6 +118,7 @@ class Utils:
         :param code: 完整的 CQ 码
         :return: Element 实例
         """
+
         kwargs = Utils.to_mapping(Utils.remove_brackets(code))
         mapping = {
             'text': Text, 'face': Face, 'at': At, 'share': Share, 'reply': Reply
@@ -119,6 +131,7 @@ class Utils:
         """
         将为支持的完整的 CQ 码转换为暂时字符串
 
+        >>> from JustBot.adapters.cqhttp.elements import Utils
         >>> Utils.format_unsupported_display('[CQ:image,file=xxx,url=yyy]')
         '[|image:xxx:yyy]'
         >>> Utils.format_unsupported_display('[CQ:image,file=xxx,url=yyy]', colored=True)
@@ -131,6 +144,7 @@ class Utils:
         :param color: 字符串颜色 [默认 'bold yellow']
         :return: 字符串
         """
+
         removed_code = Utils.remove_brackets(code)
         result = '|' + removed_code.split(',')[0].split(':')[1]
         result = f'[{color}]{result}[/{color}]' if colored else result
@@ -142,6 +156,7 @@ class Utils:
         """
         将 ``Element`` 对象转化为带有颜色的可读的字符串
 
+        >>> from JustBot.adapters.cqhttp.elements import Utils, Face
         >>> Utils.as_colored_display(Face(174))
         '[bold yellow][表情:174][/bold yellow]'
         >>> Utils.as_colored_display(Face(174), color='red')
@@ -151,6 +166,7 @@ class Utils:
         :param color: 字符串颜色 [默认 'bold yellow']
         :return: 带有颜色的可读的字符串
         """
+
         return f'[{color}]{element.as_display()}[/{color}]'
 
 
