@@ -91,12 +91,15 @@ class CQHTTPAdapter(Adapter):
             pass
 
     def receiver(self, event: Type[Union[PrivateMessageEvent, GroupMessageEvent]],
-                 priority: int = 1, matcher: Union[KeywordsMatcher, CommandMatcher] = None):
+                 priority: int = 1, matcher: Union[KeywordsMatcher, CommandMatcher] = None,
+                 parameters_convert: Type[Union[str, list, dict, None]] = str):
+        parameters_convert = parameters_convert if isinstance(matcher, CommandMatcher) else None
+
         def wrapper(target: Callable and Awaitable):
             if asyncio.iscoroutinefunction(target):
                 self.logger.info(
                     f'注册监听器: [blue]{event} [red]([white]{priority}[/white])[/red][/blue] => [light_green]{target}[/light_green].')
-                self.listener_manager.join(listener=Listener(event, target), priority=priority, matcher=matcher)
+                self.listener_manager.join(listener=Listener(event, target), priority=priority, matcher=matcher, parameters_convert=parameters_convert)
             else:
                 self.logger.warning(f'无法注册监听器: 已忽略函数 [light_green]{target}[/light_green], 因为它必须是异步函数!')
 

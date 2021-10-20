@@ -4,14 +4,14 @@ from typing import Union
 
 
 class Text(Element):
-    def __init__(self, text: str):
-        self.text = text
+    def __init__(self, *texts):
+        self.texts = ' \n'.join(texts)
 
     def as_display(self) -> str:
-        return self.text
+        return self.texts
 
     def as_code(self) -> str:
-        return self.text
+        return self.texts
 
 
 class Face(Element):
