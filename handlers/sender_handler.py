@@ -1,6 +1,5 @@
 from JustBot.objects import Friend, Group
 from JustBot.apis import MessageChain, Adapter, Config as config
-from JustBot.exceptions import StatusError
 from JustBot.utils import Logger
 
 from typing import Type, Union
@@ -23,7 +22,7 @@ class SenderHandler:
         d = response.json()
         retcode = d['retcode']
         if retcode != 0:
-            StatusError(
+            self.logger.error(
                 f'发送消息失败: 状态码错误. 返回结果: `{retcode["wording"]}`.')
         else:
             if receiver_type == Friend:

@@ -1,6 +1,5 @@
 from JustBot.apis import ListenerManager, Config as config
 from JustBot.utils.logger import Logger
-from JustBot.exceptions import InternalError
 from JustBot.events import PrivateMessageEvent, GroupMessageEvent
 from JustBot.objects import Friend, Member, Group
 
@@ -23,8 +22,7 @@ class MessageHandler:
                 if i['group_id'] == data['group_id']:
                     group_name = i['group_name']
             if not group_name:
-                InternalError(
-                    '内部错误: 无法获取群聊名称!')
+                self.logger.error('内部错误: 无法获取群聊名称!')
             else:
                 self.logger.info(
                     f'{group_name}({data["group_id"]}) > {data["sender"]["nickname"]}({data["sender"]["user_id"]}) -> {data["message"]}')

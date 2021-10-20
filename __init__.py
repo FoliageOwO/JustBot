@@ -7,6 +7,5 @@ from JustBot.matchers import CommandMatcher, KeywordsMatcher
 from JustBot.objects import Friend, Group, Member
 from JustBot.utils import Logger, MatcherUtil
 from JustBot.application import BotApplication
-from JustBot.exceptions import StatusError, InternalError, NoContact, InvalidFunctionType
 
 __author__ = 'WindLeaf_qwq'

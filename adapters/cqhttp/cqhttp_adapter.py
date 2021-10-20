@@ -2,12 +2,11 @@ from JustBot.adapters.cqhttp.cqhttp_config import CQHTTPConfig
 from JustBot.adapters.cqhttp.cqhttp_utils import CQHTTPUtils
 from JustBot.apis import Adapter, Listener, ListenerManager, Config as global_config
 from JustBot.events import PrivateMessageEvent, GroupMessageEvent
-from JustBot.exceptions import StatusError, CantConnect
 from JustBot.handlers import MessageHandler
 from JustBot.matchers import KeywordsMatcher, CommandMatcher
 from JustBot.utils import Logger
 
-from typing import Callable, Type, Union
+from typing import Type, Union, Callable, Awaitable
 from aiowebsocket.converses import AioWebSocket
 from requests import ConnectionError, get as sync_get
 
@@ -27,9 +26,9 @@ class CQHTTPAdapter(Adapter):
         self.http_port = config.http_port
         self.ws_reverse = config.ws_reverse
 
-        self.adapter_utils = CQHTTPUtils(self.http_host, self.http_port)
-        self.listener_manager = ListenerManager()
         self.logger = Logger(f'Adapter/{self.name}')
+        self.adapter_utils = CQHTTPUtils(self.http_host, self.http_port, self.logger)
+        self.listener_manager = ListenerManager()
         self.message_handler = MessageHandler(self.listener_manager)
         global_config.listener_manager = self.listener_manager
         global_config.message_handler = self.message_handler
@@ -39,7 +38,7 @@ class CQHTTPAdapter(Adapter):
         try:
             return sync_get(f'http://{self.http_host}:{self.http_port}{api_path}').json()
         except ConnectionError as e:
-            raise CantConnect(
+            raise Exception(
                 f'无法连接到 CQHTTP 服务, 请检查是否配置完整! {e}')
 
     @property
@@ -56,7 +55,7 @@ class CQHTTPAdapter(Adapter):
 
     async def connect(self) -> None:
         if not self.__request_api('/get_status')['data']['online']:
-            raise StatusError(
+            raise Exception(
                 '尝试连接 CQHTTP 时返回了一个错误的状态, 请尝试重启 CQHTTP!')
 
     async def start_listen(self) -> None:
@@ -93,9 +92,12 @@ class CQHTTPAdapter(Adapter):
 
     def receiver(self, event: Type[Union[PrivateMessageEvent, GroupMessageEvent]],
                  priority: int = 1, matcher: Union[KeywordsMatcher, CommandMatcher] = None):
-        def wrapper(callable_object: Callable):
-            self.logger.info(
-                f'注册 Listener: [blue]{event} [red]([white]{priority}[/white])[/red][/blue] => [light_green]{callable_object}[/light_green].')
-            self.listener_manager.join(listener=Listener(event, callable_object), priority=priority, matcher=matcher)
+        def wrapper(target: Callable and Awaitable):
+            if asyncio.iscoroutinefunction(target):
+                self.logger.info(
+                    f'注册监听器: [blue]{event} [red]([white]{priority}[/white])[/red][/blue] => [light_green]{target}[/light_green].')
+                self.listener_manager.join(listener=Listener(event, target), priority=priority, matcher=matcher)
+            else:
+                self.logger.warning(f'无法注册监听器: 已忽略函数 [light_green]{target}[/light_green], 因为它必须是异步函数!')
 
         return wrapper

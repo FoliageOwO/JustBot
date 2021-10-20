@@ -9,30 +9,37 @@ class Logger:
     def __init__(self, logger_name: str):
         self.logger_name = logger_name
         self.console = Console()
+        self.__reformat()
+
+    def __reformat(self):
         self.formatter = f"[white][[green]{time.strftime('%H:%M:%S', time.localtime())}[white]][/green] [white][[bright_cyan]{self.logger_name}[white]][/bright_cyan]" + " {message}"
 
+    def __console_print(self, message: str):
+        self.__reformat()
+        self.console.print(message)
+
     def info(self, message):
-        self.console.print(self.formatter.format(message=message))
+        self.__console_print(self.formatter.format(message=message))
 
     def success(self, message):
-        self.console.print(
+        self.__console_print(
             self.formatter.format(message="[bright_green]{}[/bright_green]".format(message)))
 
     def warning(self, message):
-        self.console.print(self.formatter.format(message="[bright_yellow]{}[/bright_yellow]".format(message)))
+        self.__console_print(self.formatter.format(message="[bright_yellow]{}[/bright_yellow]".format(message)))
 
     def error(self, message):
-        self.console.print(self.formatter.format(message="[bright_red]{}[/bright_red]".format(message)))
+        self.__console_print(self.formatter.format(message="[bright_red]{}[/bright_red]".format(message)))
 
     def critical(self, message):
-        self.console.print(
+        self.__console_print(
             self.formatter.format(message="[bright_red on white]{}[/bright_red on white]".format(message)))
 
     def rule(self, title, style):
         self.console.rule(title=title, style=style, characters="-")
 
     def print(self, message):
-        self.console.print(message)
+        self.__console_print(message)
 
     def status(self, message):
         return self.console.status(message, spinner="simpleDotsScrolling")
