@@ -5,7 +5,17 @@ from JustBot.objects import Friend, Member, Group
 from JustBot.adapters.cqhttp.elements import Utils as ElementsUtils
 from JustBot.adapters.cqhttp.utils import CQHTTPUtils
 
+from dataclasses import dataclass
+
 import re
+
+
+@dataclass
+class Data:
+    pass
+
+
+d = Data()
 
 
 class CQHTTPMessageHandler:
@@ -15,42 +25,42 @@ class CQHTTPMessageHandler:
         self.utils = utils
 
     def handle(self, data: dict) -> None:
-        message_type = data['message_type']
-        message = data['message']
-        colored_message = message
+        for k in data.keys():
+            v = data[k]
+            if type(v) is not dict:
+                d.__setattr__(k, data[k])
+            else:
+                for kk in v.keys():
+                    d.__setattr__(kk, v[kk])
+        d.colored_message = d.message
 
         while True:
-            search_result = re.search('(\\[)CQ:.*?(])', message)
+            search_result = re.search('(\\[)CQ:.*?(])', d.message)
             if search_result:
                 group = search_result.group()
                 element = ElementsUtils.get_element_by_code(group)
-                replacement = ElementsUtils.as_colored_display(element) if element else ElementsUtils.format_unsupported_display(group, colored=True)
-                message = message.replace(group, replacement)
-                colored_message = colored_message.replace(group, f'[bold yellow]{replacement}[/bold yellow]')
+                replacement = ElementsUtils.as_colored_display(
+                    element) if element else ElementsUtils.format_unsupported_display(group, colored=True)
+                d.message = d.message.replace(group, replacement)
+                d.colored_message = d.colored_message.replace(group, f'[bold yellow]{replacement}[/bold yellow]')
             else:
                 break
 
-        if message_type == 'private':
-            self.logger.info(f'{data["sender"]["nickname"]}({data["sender"]["user_id"]}) -> {colored_message}')
-        elif message_type == 'group':
-            group_name = self.utils.get_group_by_id(data['group_id']).group_name
+        if d.message_type == 'private':
+            self.logger.info(f'{d.nickname}({d.user_id}) -> {d.colored_message}')
+        elif d.message_type == 'group':
+            group_name = self.utils.get_group_by_id(d.group_id).group_name
             self.logger.info(
-                f'{group_name}({data["group_id"]}) -> {data["sender"]["nickname"]}({data["sender"]["user_id"]}) -> {colored_message}')
-        self.trigger(message_type, message, data)
+                f'{group_name}({d.group_id}) -> {d.nickname}({d.user_id}) -> {colored_message}')
+        self.trigger(d.message_type, d.message)
 
-    # TODO: 使用 data_manager 来管理 json data
-
-    def trigger(self, message_type: str, message: str, data: dict) -> None:
+    def trigger(self, message_type: str, message: str) -> None:
         lm: ListenerManager = config.listener_manager
         if message_type == 'private':
-            event = PrivateMessageEvent(message, data['message_id'], data['raw_message'],
-                                        Friend(self.config.adapter_utils.get_friend_by_id(
-                                            data['sender']['user_id']).nickname,
-                                               data['sender']['user_id'])
-                                        )
+            event = PrivateMessageEvent(message, d.message_id, d.raw_message,
+                                        Friend(self.utils.get_friend_by_id(d.user_id).nickname, d.user_id))
         else:
-            event = GroupMessageEvent(message, data['message_id'], data['raw_message'],
-                                      self.utils.get_member_by_id(data['group_id'], data['sender']['user_id']),
-                                      self.utils.get_group_by_id(data['group_id'])
-                                      )
+            event = GroupMessageEvent(message, d.message_id, d.raw_message,
+                                      self.utils.get_member_by_id(d.group_id, d.user_id),
+                                      self.utils.get_group_by_id(d.group_id))
         lm.execute(PrivateMessageEvent if message_type == 'private' else GroupMessageEvent, message, event)
