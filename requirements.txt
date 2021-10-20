@@ -1,0 +1,4 @@
+rich==10.1.0
+requests==2.25.1
+aiowebsocket==1.0.0.dev2
+nest-asyncio==1.5.1
