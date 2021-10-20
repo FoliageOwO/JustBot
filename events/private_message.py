@@ -7,3 +7,5 @@ class PrivateMessageEvent:
         self.message_id = message_id
         self.raw_message = raw_message
         self.sender = sender
+        self.sender_type = type(self.sender)
+        self.receiver = sender.user_id

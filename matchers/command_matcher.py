@@ -11,9 +11,9 @@ class CommandMatcher:
         self.match_all_width = match_all_width
 
     def match(self, string: str) -> bool:
-        converted_commands = [MatcherUtil.convert_to_half_width(command) for command in self.commands]
+        converted_commands = [MatcherUtil.convert_to_half_width(command) + ' ' for command in self.commands]
         if not self.match_all_width:
-            result = re.match(r'|'.join(self.commands), string)
+            result = re.match(r'|'.join(self.commands), string + ' ')
         else:
-            result = re.match(r'|'.join(converted_commands), MatcherUtil.convert_to_half_width(string))
+            result = re.match(r'|'.join(converted_commands), MatcherUtil.convert_to_half_width(string) + ' ')
         return (result.span() is not None) if result else False

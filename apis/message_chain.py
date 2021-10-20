@@ -5,7 +5,7 @@ from typing import List
 
 class MessageChain:
     def __new__(cls, strings: List[str]):
-        cls._elements: List[Element]
+        cls.elements: List[Element]
         cls._strings = strings
         cls._result = ''
         for i in strings:
@@ -14,7 +14,7 @@ class MessageChain:
 
     @classmethod
     def create(cls, elements: List[Element]):
-        cls._elements = elements
+        cls.elements = elements
         strings: List[str] = []
         for i in elements:
             strings.append(i.to_code())
@@ -23,3 +23,7 @@ class MessageChain:
     @classmethod
     def to_code(cls) -> str:
         return cls._result
+
+    @classmethod
+    def as_display(cls) -> str:
+        return ''.join([element.as_display() for element in cls.elements])

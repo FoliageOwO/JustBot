@@ -8,3 +8,5 @@ class GroupMessageEvent:
         self.raw_message = raw_message
         self.sender = sender
         self.group = group
+        self.sender_type = type(self.sender)
+        self.receiver = group.group_id

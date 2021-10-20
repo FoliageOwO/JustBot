@@ -24,8 +24,8 @@ class CQHTTPSenderHandler:
         retcode = d['retcode']
         if retcode != 0:
             self.logger.error(
-                f'发送消息失败: 状态码错误. 返回结果: `{retcode["wording"]}`.')
+                f'发送消息失败: 状态码错误. 返回结果: `{d["wording"]}`.')
         else:
             if receiver_type == Friend:
                 self.logger.info(
-                    f'{message._elements} -> {config.adapter_utils.get_friend_by_id(target_id).nickname}({target_id})')
+                    f'{message.as_display()} -> {config.adapter_utils.get_friend_by_id(target_id).nickname}({target_id})')

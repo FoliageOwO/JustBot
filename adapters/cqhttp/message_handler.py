@@ -51,7 +51,7 @@ class CQHTTPMessageHandler:
         elif d.message_type == 'group':
             group_name = self.utils.get_group_by_id(d.group_id).group_name
             self.logger.info(
-                f'{group_name}({d.group_id}) -> {d.nickname}({d.user_id}) -> {colored_message}')
+                f'{group_name}({d.group_id}) -> {d.nickname}({d.user_id}) -> {d.colored_message}')
         self.trigger(d.message_type, d.message)
 
     def trigger(self, message_type: str, message: str) -> None:
