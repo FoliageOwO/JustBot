@@ -5,3 +5,4 @@ from JustBot.apis.listener_manager import ListenerManager
 from JustBot.apis.message_chain import MessageChain
 from JustBot.apis.event import Event
 from JustBot.apis.session_config import SessionConfig
+from JustBot.apis.element import Element

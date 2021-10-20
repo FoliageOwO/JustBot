@@ -1,8 +1,10 @@
-from JustBot.adapters.cqhttp import CQHTTPAdapter, CQHTTPConfig, CQHTTPUtils
-from JustBot.apis import Adapter, Config, Event, Listener, ListenerManager, MessageChain, SessionConfig
-from JustBot.elements import Element, Text, Face, At, Share, Reply
+from JustBot.adapters.cqhttp import CQHTTPAdapter, CQHTTPConfig, CQHTTPUtils, \
+                                    CQHTTPMessageHandler, CQHTTPSenderHandler
+from JustBot.adapters.cqhttp import Text, Face, At, Share, Reply
+
+from JustBot.apis import Adapter, Config, Event, Listener, \
+                         ListenerManager, MessageChain, SessionConfig, Element
 from JustBot.events import GroupMessageEvent, PrivateMessageEvent
-from JustBot.handlers import MessageHandler, SenderHandler
 from JustBot.matchers import CommandMatcher, KeywordsMatcher
 from JustBot.objects import Friend, Group, Member
 from JustBot.utils import Logger, MatcherUtil

@@ -1,8 +1,9 @@
-from JustBot.adapters.cqhttp.cqhttp_config import CQHTTPConfig
-from JustBot.adapters.cqhttp.cqhttp_utils import CQHTTPUtils
+from JustBot.adapters.cqhttp.config import CQHTTPConfig
+from JustBot.adapters.cqhttp.utils import CQHTTPUtils
+from JustBot.adapters.cqhttp.message_handler import CQHTTPMessageHandler
+from JustBot.adapters.cqhttp.sender_handler import CQHTTPSenderHandler
 from JustBot.apis import Adapter, Listener, ListenerManager, Config as global_config
 from JustBot.events import PrivateMessageEvent, GroupMessageEvent
-from JustBot.handlers import MessageHandler
 from JustBot.matchers import KeywordsMatcher, CommandMatcher
 from JustBot.utils import Logger
 
@@ -27,12 +28,13 @@ class CQHTTPAdapter(Adapter):
         self.ws_reverse = config.ws_reverse
 
         self.logger = Logger(f'Adapter/{self.name}')
-        self.adapter_utils = CQHTTPUtils(self.http_host, self.http_port, self.logger)
+        self.utils = CQHTTPUtils(self.http_host, self.http_port, self.logger)
         self.listener_manager = ListenerManager()
-        self.message_handler = MessageHandler(self.listener_manager)
+        self.sender_handler = CQHTTPSenderHandler(self)
+        self.message_handler = CQHTTPMessageHandler(self.listener_manager, self.logger)
         global_config.listener_manager = self.listener_manager
         global_config.message_handler = self.message_handler
-        global_config.adapter_utils = self.adapter_utils
+        global_config.adapter_utils = self.utils
 
     def __request_api(self, api_path: str) -> dict:
         try:

@@ -1,4 +1,4 @@
-from JustBot.elements import Element
+from JustBot.apis.element import Element
 
 from typing import List
 

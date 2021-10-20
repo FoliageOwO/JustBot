@@ -1,18 +1,18 @@
 from JustBot.apis import ListenerManager, Config as config
-from JustBot.utils.logger import Logger
+from JustBot.utils import Logger
 from JustBot.events import PrivateMessageEvent, GroupMessageEvent
 from JustBot.objects import Friend, Member, Group
 
 from requests import get as sync_get
 
 
-class MessageHandler:
-    def __init__(self, listener_manager: ListenerManager) -> None:
+class CQHTTPMessageHandler:
+    def __init__(self, listener_manager: ListenerManager, logger: Logger) -> None:
         self.listener_manager = listener_manager
-        self.logger = Logger('Handler/Message')
+        self.logger = logger
 
     def handle(self, data: dict) -> None:
-        # __import__('rich').print(data) -> DEBUG
+        __import__('rich').print(data)
         message_type = data['message_type']
         if message_type == 'private':
             self.logger.info(f'{data["sender"]["nickname"]}({data["sender"]["user_id"]}) -> {data["message"]}')

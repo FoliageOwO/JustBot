@@ -1,7 +1,6 @@
 from JustBot.utils import Logger
 from JustBot.apis import Adapter, MessageChain, Config as config
 from JustBot.objects import Friend, Group
-from JustBot.handlers import SenderHandler
 
 from typing import Callable, Type, Union, Awaitable
 
@@ -14,8 +13,8 @@ class BotApplication:
     def __init__(self, adapter: Adapter) -> None:
         self.adapter = adapter
         self.logger = Logger(f'Application/{VERSION}')
-        self.sender_handler = SenderHandler(self.adapter)
-        self.adapter_utils = self.adapter.adapter_utils
+        self.sender_handler = self.adapter.sender_handler
+        self.adapter_utils = self.adapter.utils
 
         self.logger.info(f'加载 JustBot<v{VERSION}> 中...')
         self.logger.info(f'使用的适配器: `{adapter.name}`.')

@@ -6,7 +6,7 @@ from typing import Type, Union
 from requests import post as sync_post
 
 
-class SenderHandler:
+class CQHTTPSenderHandler:
     def __init__(self, adapter: Adapter):
         self.adapter = adapter
         self.logger = Logger('Handler/Sender')
@@ -15,7 +15,8 @@ class SenderHandler:
         string = message.as_code()
         data = {
             'user_id' if receiver_type == Friend else 'group_id': target_id,
-            'message': string}
+            'message': string
+        }
         url = f'http://{self.adapter.http_host}:{self.adapter.http_port}/send_' + (
             'private' if receiver_type == Friend else 'group') + '_msg'
         response = sync_post(url, data=data)
