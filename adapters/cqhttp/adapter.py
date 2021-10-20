@@ -31,7 +31,7 @@ class CQHTTPAdapter(Adapter):
         self.utils = CQHTTPUtils(self.http_host, self.http_port, self.logger)
         self.listener_manager = ListenerManager()
         self.sender_handler = CQHTTPSenderHandler(self)
-        self.message_handler = CQHTTPMessageHandler(self.listener_manager, self.logger)
+        self.message_handler = CQHTTPMessageHandler(self.listener_manager, self.logger, self.utils)
         global_config.listener_manager = self.listener_manager
         global_config.message_handler = self.message_handler
         global_config.adapter_utils = self.utils

@@ -17,16 +17,9 @@ class MessageChain:
         cls._elements = elements
         strings: List[str] = []
         for i in elements:
-            strings.append(i.as_code())
+            strings.append(i.to_code())
         return cls(strings)
 
     @classmethod
-    def as_code(cls) -> str:
+    def to_code(cls) -> str:
         return cls._result
-
-    @classmethod
-    def as_display(cls) -> str:
-        s = ''
-        for i in cls._elements:
-            s += i.as_display()
-        return s

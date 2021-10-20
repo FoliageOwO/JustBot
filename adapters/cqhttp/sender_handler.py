@@ -9,10 +9,10 @@ from requests import post as sync_post
 class CQHTTPSenderHandler:
     def __init__(self, adapter: Adapter):
         self.adapter = adapter
-        self.logger = Logger('Handler/Sender')
+        self.logger = self.adapter.logger
 
     def send_message(self, receiver_type: Type[Union[Friend, Group]], target_id: int, message: MessageChain) -> None:
-        string = message.as_code()
+        string = message.to_code()
         data = {
             'user_id' if receiver_type == Friend else 'group_id': target_id,
             'message': string
@@ -28,4 +28,4 @@ class CQHTTPSenderHandler:
         else:
             if receiver_type == Friend:
                 self.logger.info(
-                    f'{message.as_display()} -> {config.adapter_utils.get_friend_by_id(target_id).nickname}({target_id})')
+                    f'{message._elements} -> {config.adapter_utils.get_friend_by_id(target_id).nickname}({target_id})')
