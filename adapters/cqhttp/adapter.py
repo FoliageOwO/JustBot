@@ -6,6 +6,7 @@ from JustBot.apis import Adapter, Listener, ListenerManager, Config as global_co
 from JustBot.events import PrivateMessageEvent, GroupMessageEvent
 from JustBot.matchers import KeywordsMatcher, CommandMatcher
 from JustBot.utils import Logger
+from JustBot.application import HTTP_PROTOCOL, WS_PROTOCOL
 
 from typing import Type, Union, Callable, Awaitable, List
 from websockets import connect as ws_connect, serve as ws_serve, WebSocketServerProtocol
@@ -28,17 +29,17 @@ class CQHTTPAdapter(Adapter):
         self.ws_reverse = config.ws_reverse
 
         self.logger = Logger(f'Adapter/{self.name}')
-        self.utils = CQHTTPUtils(self.http_host, self.http_port, self.logger)
         self.listener_manager = ListenerManager()
+        self.utils = CQHTTPUtils(self)
         self.sender_handler = CQHTTPSenderHandler(self)
-        self.message_handler = CQHTTPMessageHandler(self.listener_manager, self.logger, self.utils)
+        self.message_handler = CQHTTPMessageHandler(self)
         global_config.listener_manager = self.listener_manager
         global_config.message_handler = self.message_handler
         global_config.adapter_utils = self.utils
 
     def __request_api(self, api_path: str) -> dict:
         try:
-            return sync_get(f'http://{self.http_host}:{self.http_port}{api_path}').json()
+            return sync_get(f'{HTTP_PROTOCOL}{self.http_host}:{self.http_port}{api_path}').json()
         except ConnectionError as e:
             raise Exception(
                 f'无法连接到 CQHTTP 服务, 请检查是否配置完整! {e}')
@@ -69,7 +70,7 @@ class CQHTTPAdapter(Adapter):
     async def __obverse_listen(self) -> None:
         async def run():
             with self.logger.status(f'正在尝试连接至 {self.name} WebSocket 服务器...') as status:
-                async with ws_connect(f'ws://{self.ws_host}:{self.ws_port}') as ws:
+                async with ws_connect(f'{WS_PROTOCOL}{self.ws_host}:{self.ws_port}') as ws:
                     self.logger.success('连接成功, 开始监听消息!')
                     status.stop()
                     while True:
@@ -95,7 +96,7 @@ class CQHTTPAdapter(Adapter):
                         self.auto_handle(data)
 
                 async with ws_serve(handle, self.ws_host, self.ws_port):
-                    self.logger.success(f'WebSocket 服务器建立成功: [bold blue]ws://{self.ws_host}:{self.ws_port}[/bold blue]')
+                    self.logger.success(f'WebSocket 服务器建立成功: [bold blue]{WS_PROTOCOL}{self.ws_host}:{self.ws_port}[/bold blue]')
                     while True:
                         await asyncio.Future()
 

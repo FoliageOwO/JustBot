@@ -7,6 +7,8 @@ from typing import Callable, Type, Union, Awaitable
 import asyncio
 
 VERSION = '2.0.1'
+HTTP_PROTOCOL = 'http://'
+WS_PROTOCOL = 'ws://'
 
 
 class BotApplication:

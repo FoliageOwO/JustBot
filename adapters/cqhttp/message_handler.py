@@ -1,9 +1,7 @@
 from JustBot.apis import ListenerManager, Config as config
-from JustBot.utils import Logger
 from JustBot.events import PrivateMessageEvent, GroupMessageEvent
 from JustBot.objects import Friend, Member, Group
 from JustBot.adapters.cqhttp.elements import Utils as ElementsUtils
-from JustBot.adapters.cqhttp.utils import CQHTTPUtils
 
 from dataclasses import dataclass
 
@@ -19,10 +17,10 @@ d = Data()
 
 
 class CQHTTPMessageHandler:
-    def __init__(self, listener_manager: ListenerManager, logger: Logger, utils: CQHTTPUtils) -> None:
-        self.listener_manager = listener_manager
-        self.logger = logger
-        self.utils = utils
+    def __init__(self, adapter) -> None:
+        self.listener_manager = adapter.listener_manager
+        self.logger = adapter.logger
+        self.utils = adapter.utils
 
     def handle(self, data: dict) -> None:
         for k in data.keys():
