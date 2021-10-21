@@ -34,7 +34,7 @@ class BotApplication:
 
         self.logger.info(f'加载 JustBot<v{VERSION}> 中...')
         self.logger.info(f'使用的适配器: `{adapter.name}`.')
-        self.__run_coroutine(self.adapter.connect())
+        self.__run_coroutine(self.adapter.check())
         self.logger.info(f'获取账号信息: 账号 `{self.adapter.account}`, 昵称 `{self.adapter.nick_name}`.')
         self.set_config()
 
