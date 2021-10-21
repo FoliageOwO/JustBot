@@ -1,7 +1,7 @@
-from JustBot.adapters.cqhttp.config import CQHTTPConfig
-from JustBot.adapters.cqhttp.utils import CQHTTPUtils
-from JustBot.adapters.cqhttp.message_handler import CQHTTPMessageHandler
-from JustBot.adapters.cqhttp.sender_handler import CQHTTPSenderHandler
+from JustBot.adapters.cqhttp.config import CQHttpConfig
+from JustBot.adapters.cqhttp.utils import CQHttpUtils
+from JustBot.adapters.cqhttp.message_handler import CQHttpMessageHandler
+from JustBot.adapters.cqhttp.sender_handler import CQHttpSenderHandler
 from JustBot.apis import Adapter, Listener, ListenerManager, Config as global_config
 from JustBot.events import PrivateMessageEvent, GroupMessageEvent
 from JustBot.matchers import KeywordsMatcher, CommandMatcher
@@ -19,9 +19,9 @@ import nest_asyncio
 nest_asyncio.apply()
 
 
-class CQHTTPAdapter(Adapter):
-    def __init__(self, config: CQHTTPConfig) -> None:
-        self.name = 'CQHTTP'
+class CQHttpAdapter(Adapter):
+    def __init__(self, config: CQHttpConfig) -> None:
+        self.name = 'CQHttp'
         self.ws_host = config.ws_host
         self.ws_port = config.ws_port
         self.http_host = config.http_host
@@ -30,9 +30,9 @@ class CQHTTPAdapter(Adapter):
 
         self.logger = Logger(f'Adapter/{self.name}')
         self.listener_manager = ListenerManager()
-        self.utils = CQHTTPUtils(self)
-        self.sender_handler = CQHTTPSenderHandler(self)
-        self.message_handler = CQHTTPMessageHandler(self)
+        self.utils = CQHttpUtils(self)
+        self.sender_handler = CQHttpSenderHandler(self)
+        self.message_handler = CQHttpMessageHandler(self)
         global_config.listener_manager = self.listener_manager
         global_config.message_handler = self.message_handler
         global_config.adapter_utils = self.utils
@@ -42,7 +42,7 @@ class CQHTTPAdapter(Adapter):
             return sync_get(f'{HTTP_PROTOCOL}{self.http_host}:{self.http_port}{api_path}').json()
         except ConnectionError as e:
             raise Exception(
-                f'无法连接到 CQHTTP 服务, 请检查是否配置完整! {e}')
+                f'无法连接到 CQHttp 服务, 请检查是否配置完整! {e}')
 
     @property
     def login_info(self) -> dict:
@@ -59,7 +59,7 @@ class CQHTTPAdapter(Adapter):
     async def connect(self) -> None:
         if not self.__request_api('/get_status')['data']['online']:
             raise Exception(
-                '尝试连接 CQHTTP 时返回了一个错误的状态, 请尝试重启 CQHTTP!')
+                '尝试连接 CQHttp 时返回了一个错误的状态, 请尝试重启 CQHttp!')
 
     async def start_listen(self) -> None:
         try:

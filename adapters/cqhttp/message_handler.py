@@ -16,7 +16,7 @@ class Data:
 d = Data()
 
 
-class CQHTTPMessageHandler:
+class CQHttpMessageHandler:
     def __init__(self, adapter) -> None:
         self.listener_manager = adapter.listener_manager
         self.logger = adapter.logger

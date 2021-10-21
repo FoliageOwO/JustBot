@@ -1,5 +1,5 @@
-from JustBot.adapters.cqhttp import CQHTTPAdapter, CQHTTPConfig, CQHTTPUtils, \
-                                    CQHTTPMessageHandler, CQHTTPSenderHandler
+from JustBot.adapters.cqhttp import CQHttpAdapter, CQHttpConfig, CQHttpUtils, \
+                                    CQHttpMessageHandler, CQHttpSenderHandler
 from JustBot.adapters.cqhttp import Text, Face, At, Share, Reply
 
 from JustBot.apis import Adapter, Config, Event, Listener, \

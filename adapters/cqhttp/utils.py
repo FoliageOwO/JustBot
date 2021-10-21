@@ -5,7 +5,7 @@ from JustBot.application import HTTP_PROTOCOL
 from requests import get as sync_get
 
 
-class CQHTTPUtils:
+class CQHttpUtils:
     def __init__(self, adapter):
         self.host = adapter.http_host
         self.port = adapter.http_port

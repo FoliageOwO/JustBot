@@ -7,7 +7,7 @@ from typing import Type, Union
 from requests import post as sync_post
 
 
-class CQHTTPSenderHandler:
+class CQHttpSenderHandler:
     def __init__(self, adapter):
         self.host = adapter.http_host
         self.port = adapter.http_port
