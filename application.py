@@ -18,11 +18,11 @@ class BotApplication:
 
         机器人实例
 
-        >>> from JustBot import BotApplication, CQHTTPAdapter, CQHTTPConfig
-        >>> cqhttp_config = CQHTTPConfig(ws_host='127.0.0.1', ws_port=6700,
+        >>> from JustBot import BotApplication, CQHttpAdapter, CQHttpConfig
+        >>> cqhttp_config = CQHttpConfig(ws_host='127.0.0.1', ws_port=6700,
         ...                               http_host='127.0.0.1', http_port=5700, ws_reverse=False)
         ...
-        >>> cqhttp_adapter = CQHTTPAdapter(cqhttp_config)
+        >>> cqhttp_adapter = CQHttpAdapter(cqhttp_config)
         >>> bot = BotApplication(cqhttp_adapter)
         >>> bot.start_running()
         """
