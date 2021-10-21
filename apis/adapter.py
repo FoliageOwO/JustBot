@@ -11,7 +11,26 @@ class Adapter:
         pass
 
     @abstractmethod
-    async def connect(self) -> None:
+    def __request_api(self, api_path: str) -> str:
+        pass
+
+    @abstractmethod
+    @property
+    def login_info(self) -> dict:
+        pass
+
+    @abstractmethod
+    @property
+    def account(self) -> int:
+        pass
+
+    @abstractmethod
+    @property
+    def nick_name(self) -> str:
+        pass
+
+    @abstractmethod
+    async def check(self) -> None:
         pass
 
     @abstractmethod

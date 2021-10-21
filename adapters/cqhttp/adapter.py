@@ -56,7 +56,7 @@ class CQHttpAdapter(Adapter):
     def nick_name(self) -> str:
         return self.login_info['data']['nickname']
 
-    async def connect(self) -> None:
+    async def check(self) -> None:
         if not self.__request_api('/get_status')['data']['online']:
             raise Exception(
                 '尝试连接 CQHttp 时返回了一个错误的状态, 请尝试重启 CQHttp!')
