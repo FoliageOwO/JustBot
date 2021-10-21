@@ -8,7 +8,7 @@ from JustBot.matchers import KeywordsMatcher, CommandMatcher
 from JustBot.utils import Logger
 
 from typing import Type, Union, Callable, Awaitable, List
-from aiowebsocket.converses import AioWebSocket
+from websockets import connect as ws_connect, serve as ws_serve, WebSocketServerProtocol
 from requests import ConnectionError, get as sync_get
 
 import asyncio
@@ -64,25 +64,44 @@ class CQHTTPAdapter(Adapter):
         try:
             await self.__reverse_listen() if self.ws_reverse else await self.__obverse_listen()
         except KeyboardInterrupt:
-            self.logger.success('已退出!')
+            self.logger.info('已退出!')
 
     async def __obverse_listen(self) -> None:
         async def run():
-            self.logger.info(f'正在尝试连接至 {self.name} Websocket 服务器...')
-            async with AioWebSocket(f'ws://{self.ws_host}:{self.ws_port}') as aws:
-                r = aws.manipulator
-                self.logger.success('连接成功, 开始监听消息!')
-                while True:
-                    data = json.loads((await r.receive()).decode('utf-8'))
-                    self.auto_handle(data)
+            with self.logger.status(f'正在尝试连接至 {self.name} WebSocket 服务器...') as status:
+                async with ws_connect(f'ws://{self.ws_host}:{self.ws_port}') as ws:
+                    self.logger.success('连接成功, 开始监听消息!')
+                    status.stop()
+                    while True:
+                        data = json.loads(await ws.recv())
+                        self.auto_handle(data)
 
         loop = asyncio.get_event_loop()
         loop.run_until_complete(run())
         loop.run_forever()
 
     async def __reverse_listen(self) -> None:
-        # TODO: 支持反向 WebSocket
-        self.logger.error('暂未支持反向 WebSocket!')
+        async def run():
+            with self.logger.status(f'正在等待 WebSocket 客户端连接...') as status:
+                self.is_stopped = False
+
+                async def handle(websocket: WebSocketServerProtocol, path):
+                    async for message in websocket:
+                        if not self.is_stopped:
+                            self.logger.success('连接成功, 开始监听消息!')
+                            status.stop()
+                            self.is_stopped = True
+                        data = json.loads(message)
+                        self.auto_handle(data)
+
+                async with ws_serve(handle, self.ws_host, self.ws_port):
+                    self.logger.success(f'WebSocket 服务器建立成功: [bold blue]ws://{self.ws_host}:{self.ws_port}[/bold blue]')
+                    while True:
+                        await asyncio.Future()
+
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(run())
+        loop.run_forever()
 
     def auto_handle(self, data: dict) -> None:
         _type = data['post_type']
