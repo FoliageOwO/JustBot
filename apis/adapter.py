@@ -23,15 +23,7 @@ class Adapter(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def account(self) -> int:
-        pass
-
-    @abstractmethod
     def nick_name(self) -> str:
-        pass
-
-    @abstractmethod
-    async def check(self) -> None:
         pass
 
     @abstractmethod

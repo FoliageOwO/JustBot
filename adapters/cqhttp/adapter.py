@@ -6,7 +6,7 @@ from JustBot.apis import Adapter, Config as global_config
 from JustBot.events import PrivateMessageEvent, GroupMessageEvent
 from JustBot.matchers import KeywordsMatcher, CommandMatcher
 from JustBot.utils import Logger, ListenerManager, Listener
-from JustBot.application import HTTP_PROTOCOL, WS_PROTOCOL
+from JustBot.application import HTTP_PROTOCOL, WS_PROTOCOL, BotApplication
 
 from typing import Type, Union, Callable, Awaitable, List, Coroutine, Any
 from websockets import connect as ws_connect, serve as ws_serve, WebSocketServerProtocol
@@ -36,6 +36,7 @@ class CQHttpAdapter(Adapter):
         global_config.listener_manager = self.listener_manager
         global_config.message_handler = self.message_handler
         global_config.adapter_utils = self.utils
+        BotApplication.coroutine(self.check())
 
     async def _request_api(self, api_path: str) -> dict:
         try:
@@ -50,17 +51,13 @@ class CQHttpAdapter(Adapter):
         return await self._request_api('/get_login_info')
 
     @property
-    async def account(self) -> int:
-        return (await self.login_info)['user_id']
-
-    @property
     async def nick_name(self) -> str:
         return (await self.login_info)['nickname']
 
     async def check(self) -> None:
         if not (await self._request_api('/get_status'))['online']:
             raise Exception(
-                '尝试连接 CQHTTP 时返回了一个错误的状态, 请尝试重启 CQHttp!')
+                '尝试连接 CQHTTP 时返回了一个错误的状态, 请尝试重启 CQHTTP!')
 
     async def start_listen(self) -> None:
         try:

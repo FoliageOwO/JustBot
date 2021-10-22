@@ -10,7 +10,7 @@ VERSION = '2.0.1'
 HTTP_PROTOCOL = 'http://'
 WS_PROTOCOL = 'ws://'
 
-
+# TODO: 可选参数使用 typing.Optional
 class BotApplication:
     def __init__(self, adapter: Adapter) -> None:
         """
@@ -20,7 +20,7 @@ class BotApplication:
 
         >>> from JustBot import BotApplication, CQHttpAdapter, CQHttpConfig
         >>> cqhttp_config = CQHttpConfig(ws_host='127.0.0.1', ws_port=6700,
-        ...                               http_host='127.0.0.1', http_port=5700, ws_reverse=False)
+        ...                              http_host='127.0.0.1', http_port=5700, ws_reverse=False)
         ...
         >>> cqhttp_adapter = CQHttpAdapter(cqhttp_config)
         >>> bot = BotApplication(cqhttp_adapter)
@@ -34,19 +34,16 @@ class BotApplication:
 
         self.logger.info(f'加载 JustBot<v{VERSION}> 中...')
         self.logger.info(f'使用的适配器: `{adapter.name}`.')
-        self.__coroutine(self.adapter.check())
-        self.account = self.__coroutine(self.adapter.account)
-        self.nick_name = self.__coroutine(self.adapter.nick_name)
-        self.logger.info(f'获取账号信息: 账号 `{self.account}`, 昵称 `{self.nick_name}`.')
+        self.nick_name = self.coroutine(self.adapter.nick_name)
+        self.logger.info(f'登录成功: `{self.nick_name}`.')
         self.set_config()
 
     def set_config(self) -> None:
         config.adapter = self.adapter
-        config.account = self.account
         config.nick_name = self.nick_name
 
     def start_running(self) -> None:
-        self.__coroutine(self.adapter.start_listen())
+        self.coroutine(self.adapter.start_listen())
 
     async def send_msg(self, receiver_type: Type[Union[Friend, Group]], target_id: int, message: MessageChain):
         """
@@ -64,5 +61,5 @@ class BotApplication:
         await self.sender_handler.send_message(receiver_type, target_id, message)
 
     @staticmethod
-    def __coroutine(coroutine: Union[Coroutine, Any]) -> Any:
+    def coroutine(coroutine: Union[Coroutine, Any]) -> Any:
         return asyncio.run(coroutine)
