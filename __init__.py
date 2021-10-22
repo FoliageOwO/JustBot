@@ -1,10 +1,8 @@
 from JustBot.adapters.cqhttp import (CQHttpAdapter, CQHttpConfig, CQHttpUtils,
                                      CQHttpMessageHandler, CQHttpSenderHandler)
-from JustBot.adapters.cqhttp import Text, Face, At, Share, Reply, ElementsUtils
 
 from JustBot.adapters.mirai import (MiraiAdapter, MiraiConfig, MiraiUtils,
                                     MiraiMessageHandler, MiraiSenderHandler)
-from JustBot.adapters.mirai import Text, Face, At, Share, Reply
 
 from JustBot.apis import (Adapter, Config, Event, Listener,
                           ListenerManager, MessageChain, SessionConfig, Element)

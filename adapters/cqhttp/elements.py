@@ -169,15 +169,43 @@ class Utils:
 
         return f'[{color}]{element.as_display()}[/{color}]'
 
+    @staticmethod
+    def as_str(element: Element):
+        """
+        将 ``Element`` 对象转换为 ``<Element:{element_name}|{element_display}>`` 的格式
+
+        >>> from JustBot.adapters.cqhttp.elements import Utils, Face
+        >>> Utils.as_str(Face(174))
+        '<Element:Face|[表情:174]>'
+
+        :param element: Element 对象
+        :return: 转换后的字符串
+        """
+
+        return f'<Element:{element.__class__.__name__}|{element.as_display()}>'
+
 
 # TODO: 添加对更多 CQ 码的支持
 
 class Text(Element):
+    """
+    普通文本
+
+    >>> from JustBot.adapters.cqhttp.elements import Text
+    >>> Text('Hello, World!')
+    '<Element:Text|Hello, World!>'
+    >>> # 还支持多行
+    >>> Text('Hello', 'World')
+    '<Element:Text|Hello<\n>World>'
+    >>> from JustBot.apis.message_chain import MessageChain
+    >>> message = MessageChain.create([Text('第一行', '第二行')])
+    """
+
     def __init__(self, *texts):
-        self.texts = ' \n'.join(texts)
+        self.texts = '\n'.join(texts)
 
     def as_display(self):
-        return self.texts
+        return self.texts.replace('\n', '<\\n>')
 
     def to_code(self):
         return self.texts
@@ -186,10 +214,22 @@ class Text(Element):
     def as_code_display(code: str):
         return code
 
+    def __str__(self):
+        return Utils.as_str(self)
+
 
 class Face(Element):
-    def __init__(self, id: int):
-        self.id = id
+    """
+    表情
+
+    >>> from JustBot.adapters.cqhttp.elements import Face
+    >>> Face(174)
+    '<Element:Face|[表情:174]>'
+    >>> from JustBot.apis.message_chain import MessageChain
+    >>> MessageChain.create([Face(174)])
+    """
+    def __init__(self, face_id: int):
+        self.id = face_id
 
     def as_display(self):
         return Utils.format_display('表情', self.id)
@@ -201,14 +241,27 @@ class Face(Element):
     def as_code_display(code: str):
         return Face(int(Utils.get(code, 'id'))).as_display()
 
+    def __str__(self):
+        return Utils.as_str(self)
+
 
 class At(Element):
+    """
+    艾特
+
+    >>> from JustBot.adapters.cqhttp.elements import At
+    >>> At(10001)
+    '<Element:At|[艾特:10001]>'
+    >>> from JustBot.apis.message_chain import MessageChain
+    >>> message = MessageChain.create([At(10001), Text('你好!')])
+    """
+
     def __init__(self, qq: Union[str, int], name: str = None):
         self.qq = qq
         self.name = name
 
     def as_display(self):
-        return Utils.format_display('At', self.qq, self.name)
+        return Utils.format_display('艾特', self.qq, self.name)
 
     def to_code(self):
         return Utils.format_code('at', qq=self.qq, name=self.name)
@@ -217,8 +270,26 @@ class At(Element):
     def as_code_display(code: str):
         return At(int(Utils.get(code, 'qq')), Utils.get(code, 'name')).as_display()
 
+    def __str__(self):
+        return Utils.as_str(self)
+
 
 class Share(Element):
+    """
+    分享
+
+    >>> from JustBot.adapters.cqhttp.elements import Share
+    >>> Share('https://www.baidu.com/', '百度一下，你就知道')
+    '<Element:Share|[分享:https://www.baidu.com/:百度一下，你就知道]>'
+    >>> # 可嵌入内容和设置图片
+    >>> Share('https://blogs.windleaf.ml/', 'WindLeafの日常',
+    ...       content='WindLeaf 的小博客', image_url='https://q1.qlogo.cn/g?b=qq&nk=3584033226&s=640'
+    ... )
+    '<Element:Share|[分享:https://blogs.windleaf.ml/:WindLeafの日常:WindLeaf 的小博客:https://q1.qlogo.cn/g?b=qq&nk=3584033226&s=640]>'
+    >>> from JustBot.apis.message_chain import MessageChain
+    >>> message = MessageChain.create([At(10001), Share('https://www.xxx.com/', '好东西')])
+    """
+
     def __init__(self, url: str, title: str, content: str = None, image_url: str = None):
         self.url = url
         self.title = title
@@ -226,7 +297,7 @@ class Share(Element):
         self.image_url = image_url
 
     def as_display(self):
-        return Utils.format_display('分享', self.url, self.title)
+        return Utils.format_display('分享', self.url, self.title, self.content, self.image_url)
 
     def to_code(self):
         return Utils.format_code('share', url=self.url, title=self.title, content=self.content, image=self.image_url)
@@ -236,8 +307,21 @@ class Share(Element):
         return Share(Utils.get(code, 'url'), Utils.get(code, 'title'), Utils.get(code, 'content'),
                      Utils.get(code, 'image')).as_display()
 
+    def __str__(self):
+        return Utils.as_str(self)
+
 
 class Reply(Element):
+    """
+    回复
+
+    >>> from JustBot.adapters.cqhttp.elements import Reply
+    >>> Reply(10086)
+    '<Element:Reply|[回复:10086]>'
+    >>> from JustBot.apis.message_chain import MessageChain
+    >>> message = MessageChain.create([Reply(10086), Text('你这话说的不对!')])
+    """
+
     def __init__(self, message_id: int):
         self.message_id = message_id
 
@@ -250,3 +334,6 @@ class Reply(Element):
     @staticmethod
     def as_code_display(code: str):
         return Reply(int(Utils.get(code, 'id'))).as_display()
+
+    def __str__(self):
+        return Utils.as_str(self)
