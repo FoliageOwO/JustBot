@@ -8,7 +8,7 @@ from JustBot.matchers import KeywordsMatcher, CommandMatcher
 from JustBot.utils import Logger, ListenerManager, Listener
 from JustBot.application import HTTP_PROTOCOL, WS_PROTOCOL, BotApplication
 
-from typing import Type, Union, Callable, Awaitable, List, Coroutine, Any
+from typing import Type, Union, Callable, Awaitable, List, Coroutine, Any, NoReturn
 from websockets import connect as ws_connect, serve as ws_serve, WebSocketServerProtocol
 from aiohttp import request, ClientConnectorError
 
