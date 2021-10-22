@@ -8,9 +8,9 @@ from JustBot.matchers import KeywordsMatcher, CommandMatcher
 from JustBot.utils import Logger
 from JustBot.application import HTTP_PROTOCOL, WS_PROTOCOL
 
-from typing import Type, Union, Callable, Awaitable, List
+from typing import Type, Union, Callable, Awaitable, List, Coroutine
 from websockets import connect as ws_connect, serve as ws_serve, WebSocketServerProtocol
-from requests import ConnectionError, get as sync_get
+from aiohttp import request, ClientConnectorError
 
 import asyncio
 import json
@@ -37,37 +37,42 @@ class CQHttpAdapter(Adapter):
         global_config.message_handler = self.message_handler
         global_config.adapter_utils = self.utils
 
-    def __request_api(self, api_path: str) -> dict:
+    async def __request_api(self, api_path: str) -> dict:
         try:
-            return sync_get(f'{HTTP_PROTOCOL}{self.http_host}:{self.http_port}{api_path}').json()
-        except ConnectionError as e:
+            async with request('GET', f'{HTTP_PROTOCOL}{self.http_host}:{self.http_port}{api_path}') as response:
+                return (await response.json())['data']
+        except ClientConnectorError as e:
             raise Exception(
                 f'无法连接到 CQHttp 服务, 请检查是否配置完整! {e}')
 
     @property
-    def login_info(self) -> dict:
-        return self.__request_api('/get_login_info')
+    async def login_info(self) -> dict:
+        return await self.__request_api('/get_login_info')
 
     @property
-    def account(self) -> int:
-        return self.login_info['data']['user_id']
+    async def account(self) -> int:
+        return (await self.login_info)['user_id']
 
     @property
-    def nick_name(self) -> str:
-        return self.login_info['data']['nickname']
+    async def nick_name(self) -> str:
+        return (await self.login_info)['nickname']
 
     async def check(self) -> None:
-        if not self.__request_api('/get_status')['data']['online']:
+        if not (await self.__request_api('/get_status'))['online']:
             raise Exception(
                 '尝试连接 CQHttp 时返回了一个错误的状态, 请尝试重启 CQHttp!')
 
     async def start_listen(self) -> None:
         try:
-            await self.__reverse_listen() if self.ws_reverse else await self.__obverse_listen()
+            coroutine = await self.__reverse_listen() \
+                if self.ws_reverse else await self.__obverse_listen()
+            loop = asyncio.get_event_loop()
+            loop.run_until_complete(coroutine)
+            loop.run_forever()
         except KeyboardInterrupt:
             self.logger.info('已退出!')
 
-    async def __obverse_listen(self) -> None:
+    async def __obverse_listen(self) -> Coroutine:
         async def run():
             with self.logger.status(f'正在尝试连接至 {self.name} WebSocket 服务器...') as status:
                 async with ws_connect(f'{WS_PROTOCOL}{self.ws_host}:{self.ws_port}') as ws:
@@ -75,13 +80,10 @@ class CQHttpAdapter(Adapter):
                     status.stop()
                     while True:
                         data = json.loads(await ws.recv())
-                        self.auto_handle(data)
+                        await self.auto_handle(data)
+        return run()
 
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(run())
-        loop.run_forever()
-
-    async def __reverse_listen(self) -> None:
+    async def __reverse_listen(self) -> Coroutine:
         async def run():
             with self.logger.status(f'正在等待 WebSocket 客户端连接...') as status:
                 self.is_stopped = False
@@ -93,21 +95,18 @@ class CQHttpAdapter(Adapter):
                             status.stop()
                             self.is_stopped = True
                         data = json.loads(message)
-                        self.auto_handle(data)
+                        await self.auto_handle(data)
 
                 async with ws_serve(handle, self.ws_host, self.ws_port):
                     self.logger.success(f'WebSocket 服务器建立成功: [bold blue]{WS_PROTOCOL}{self.ws_host}:{self.ws_port}[/bold blue]')
                     while True:
                         await asyncio.Future()
+        return run()
 
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(run())
-        loop.run_forever()
-
-    def auto_handle(self, data: dict) -> None:
+    async def auto_handle(self, data: dict) -> None:
         _type = data['post_type']
         if _type == 'message':
-            self.message_handler.handle(data)
+            await self.message_handler.handle(data)
         else:
             # TODO: 增加返回事件
             pass

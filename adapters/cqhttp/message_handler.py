@@ -22,7 +22,7 @@ class CQHttpMessageHandler:
         self.logger = adapter.logger
         self.utils = adapter.utils
 
-    def handle(self, data: dict) -> None:
+    async def handle(self, data: dict) -> None:
         for k in data.keys():
             v = data[k]
             if type(v) is not dict:
@@ -47,18 +47,18 @@ class CQHttpMessageHandler:
         if d.message_type == 'private':
             self.logger.info(f'{d.nickname}({d.user_id}) -> {d.colored_message}')
         elif d.message_type == 'group':
-            group_name = self.utils.get_group_by_id(d.group_id).group_name
+            group_name = (await self.utils.get_group_by_id(d.group_id)).group_name
             self.logger.info(
                 f'{group_name}({d.group_id}) -> {d.nickname}({d.user_id}) -> {d.colored_message}')
-        self.trigger(d.message_type, d.message)
+        await self.trigger(d.message_type, d.message)
 
-    def trigger(self, message_type: str, message: str) -> None:
+    async def trigger(self, message_type: str, message: str) -> None:
         lm: ListenerManager = config.listener_manager
         if message_type == 'private':
             event = PrivateMessageEvent(message, d.message_id, d.raw_message,
-                                        Friend(self.utils.get_friend_by_id(d.user_id).nickname, d.user_id))
+                                        Friend((await self.utils.get_friend_by_id(d.user_id)).nickname, d.user_id))
         else:
             event = GroupMessageEvent(message, d.message_id, d.raw_message,
-                                      self.utils.get_member_by_id(d.group_id, d.user_id),
-                                      self.utils.get_group_by_id(d.group_id))
-        lm.execute(PrivateMessageEvent if message_type == 'private' else GroupMessageEvent, message, event)
+                                      await self.utils.get_member_by_id(d.group_id, d.user_id),
+                                      await self.utils.get_group_by_id(d.group_id))
+        await lm.execute(PrivateMessageEvent if message_type == 'private' else GroupMessageEvent, message, event)

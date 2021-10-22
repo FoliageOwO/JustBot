@@ -2,7 +2,7 @@ from JustBot.utils import Logger
 from JustBot.apis import Adapter, MessageChain, Config as config
 from JustBot.objects import Friend, Group
 
-from typing import Callable, Type, Union, Awaitable
+from typing import Callable, Type, Union, Coroutine, Any
 
 import asyncio
 
@@ -34,19 +34,21 @@ class BotApplication:
 
         self.logger.info(f'加载 JustBot<v{VERSION}> 中...')
         self.logger.info(f'使用的适配器: `{adapter.name}`.')
-        self.__run_coroutine(self.adapter.check())
-        self.logger.info(f'获取账号信息: 账号 `{self.adapter.account}`, 昵称 `{self.adapter.nick_name}`.')
+        self.__coroutine(self.adapter.check())
+        self.account = self.__coroutine(self.adapter.account)
+        self.nick_name = self.__coroutine(self.adapter.nick_name)
+        self.logger.info(f'获取账号信息: 账号 `{self.account}`, 昵称 `{self.nick_name}`.')
         self.set_config()
 
     def set_config(self) -> None:
         config.adapter = self.adapter
-        config.account = self.adapter.account
-        config.nick_name = self.adapter.nick_name
+        config.account = self.account
+        config.nick_name = self.nick_name
 
     def start_running(self) -> None:
-        self.__run_coroutine(self.adapter.start_listen())
+        self.__coroutine(self.adapter.start_listen())
 
-    def send_msg(self, receiver_type: Type[Union[Friend, Group]], target_id: int, message: MessageChain):
+    async def send_msg(self, receiver_type: Type[Union[Friend, Group]], target_id: int, message: MessageChain):
         """
         向联系人发送消息
 
@@ -59,8 +61,8 @@ class BotApplication:
         :param target_id: 联系人 ID [qq 号或群号]
         :param message: 要发送的消息的消息链
         """
-        self.sender_handler.send_message(receiver_type, target_id, message)
+        await self.sender_handler.send_message(receiver_type, target_id, message)
 
     @staticmethod
-    def __run_coroutine(awaitable: Awaitable):
-        asyncio.run(awaitable)
+    def __coroutine(coroutine: Union[Coroutine, Any]):
+        return asyncio.run(coroutine)

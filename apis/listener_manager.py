@@ -26,39 +26,38 @@ class ListenerManager:
             new_l[i[0]] = i[1]
         self.l = new_l
 
-    def execute(self, event_type: Type[Union[PrivateMessageEvent, GroupMessageEvent]],
-                message: str, event: Union[PrivateMessageEvent, GroupMessageEvent]) -> None:
+    async def execute(self, event_type: Type[Union[PrivateMessageEvent, GroupMessageEvent]],
+                      message: str, event: Union[PrivateMessageEvent, GroupMessageEvent]) -> None:
         for priority in self.l.keys():
             for listener_obj in self.l[priority]:
                 listener = listener_obj['listener']
                 if listener.event == event_type:
                     matcher = listener_obj['matcher']
 
-                    def run_target():
-                        self.__run_target(listener, event, message,
-                                          isinstance(matcher, CommandMatcher),
-                                          listener_obj['parameters_convert'])
+                    async def run_target():
+                        await self.__run_target(listener, event, message,
+                                                isinstance(matcher, CommandMatcher),
+                                                listener_obj['parameters_convert'])
 
                     if matcher:
                         if matcher.match(message):
-                            run_target()
+                            await run_target()
                     else:
-                        run_target()
+                        await run_target()
 
-    def __run_target(self, listener: Listener, event: Union[PrivateMessageEvent, GroupMessageEvent], message: str,
-                     is_command_matcher: bool, parameters_convert: Type[Union[str, list, dict, None]]):
+    async def __run_target(self, listener: Listener, event: Union[PrivateMessageEvent, GroupMessageEvent], message: str,
+                           is_command_matcher: bool, parameters_convert: Type[Union[str, list, dict, None]]):
         run_mapping = {
-            (lambda: asyncio.run(listener.target(event=event))): False,
-            (lambda: asyncio.run(listener.target(event=event, message=message))): False,
-            (lambda: asyncio.run(
-                listener.target(event=event,
-                                command=message.split()[0] if is_command_matcher else None,
-                                parameters=self.__get_parameters(message, parameters_convert)
-                                if is_command_matcher else None))): False
+            (lambda: listener.target(event=event)): False,
+            (lambda: listener.target(event=event, message=message)): False,
+            (lambda: listener.target(event=event,
+                                     command=message.split()[0] if is_command_matcher else None,
+                                     parameters=self.__get_parameters(message, parameters_convert)
+                                     if is_command_matcher else None)): False
         }
         for target in run_mapping.keys():
             try:
-                target()
+                await target()
                 break
             except TypeError as e:
                 run_mapping[target] = True
