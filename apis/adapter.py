@@ -1,28 +1,32 @@
-from JustBot.apis.session_config import SessionConfig
+from JustBot.apis.adapter_config import AdapterConfig
 
 from abc import ABCMeta, abstractmethod
+from typing import Any
 
 
-class Adapter:
-    __metaclass__ = ABCMeta
+class Adapter(metaclass=ABCMeta):
+    """
+    适配器 ``Adapter`` 抽象类
+    """
 
     @abstractmethod
-    def __init__(self, config: SessionConfig) -> None:
+    def __init__(self, config: AdapterConfig) -> None:
+        pass
+
+    # TODO: 添加文档
+    @abstractmethod
+    def _request_api(self, api_path: str) -> str:
         pass
 
     @abstractmethod
-    def __request_api(self, api_path: str) -> str:
-        pass
-
-    @property
     def login_info(self) -> dict:
         pass
 
-    @property
+    @abstractmethod
     def account(self) -> int:
         pass
 
-    @property
+    @abstractmethod
     def nick_name(self) -> str:
         pass
 
@@ -35,5 +39,5 @@ class Adapter:
         pass
 
     @abstractmethod
-    def receiver(self, event: str):
+    def receiver(self, event: str) -> Any:
         pass

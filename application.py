@@ -1,5 +1,5 @@
-from JustBot.utils import Logger
-from JustBot.apis import Adapter, MessageChain, Config as config
+from JustBot.utils import Logger, MessageChain
+from JustBot.apis import Adapter,  Config as config
 from JustBot.objects import Friend, Group
 
 from typing import Callable, Type, Union, Coroutine, Any
@@ -64,5 +64,5 @@ class BotApplication:
         await self.sender_handler.send_message(receiver_type, target_id, message)
 
     @staticmethod
-    def __coroutine(coroutine: Union[Coroutine, Any]):
+    def __coroutine(coroutine: Union[Coroutine, Any]) -> Any:
         return asyncio.run(coroutine)

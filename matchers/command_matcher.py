@@ -6,7 +6,8 @@ import re
 
 
 class CommandMatcher:
-    def __init__(self, commands: Union[List[str], str], match_all_width: bool = False):
+    def __init__(self, commands: Union[List[str], str],
+                 match_all_width: bool = False) -> None:
         self.commands = commands
         self.match_all_width = match_all_width
 

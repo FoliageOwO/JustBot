@@ -1,9 +1,11 @@
-from JustBot.apis import ListenerManager, Config as config
+from JustBot.apis import Config as config
+from JustBot.utils import ListenerManager
 from JustBot.events import PrivateMessageEvent, GroupMessageEvent
 from JustBot.objects import Friend, Member, Group
 from JustBot.adapters.cqhttp.elements import Utils as ElementsUtils
 
 from dataclasses import dataclass
+from typing import NoReturn
 
 import re
 
@@ -22,7 +24,7 @@ class CQHttpMessageHandler:
         self.logger = adapter.logger
         self.utils = adapter.utils
 
-    async def handle(self, data: dict) -> None:
+    async def handle(self, data: dict) -> NoReturn:
         for k in data.keys():
             v = data[k]
             if type(v) is not dict:
@@ -52,7 +54,7 @@ class CQHttpMessageHandler:
                 f'{group_name}({d.group_id}) -> {d.nickname}({d.user_id}) -> {d.colored_message}')
         await self.trigger(d.message_type, d.message)
 
-    async def trigger(self, message_type: str, message: str) -> None:
+    async def trigger(self, message_type: str, message: str) -> NoReturn:
         lm: ListenerManager = config.listener_manager
         if message_type == 'private':
             event = PrivateMessageEvent(message, d.message_id, d.raw_message,

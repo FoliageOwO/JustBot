@@ -1,11 +1,13 @@
 from abc import ABCMeta, abstractmethod
 
 
-class Element:
-    __metaclass__ = ABCMeta
+class Element(metaclass=ABCMeta):
+    """
+    消息链元素 ``Element`` 抽象类
+    """
 
     @abstractmethod
-    def __init__(self):
+    def __init__(self) -> None:
         pass
 
     @abstractmethod
@@ -19,6 +21,7 @@ class Element:
 
         :return: 转换后的字符串
         """
+
         pass
 
     @abstractmethod
@@ -32,6 +35,7 @@ class Element:
 
         :return: 转换后的 CQ 码
         """
+
         pass
 
     @staticmethod
@@ -45,4 +49,15 @@ class Element:
 
         :return: 可读的字符串
         """
+
+        pass
+
+    @abstractmethod
+    def __str__(self) -> str:
+        """
+        返回 ``Element 对象`` 的描述
+
+        :return: ``Element 对象`` 的描述
+        """
+
         pass

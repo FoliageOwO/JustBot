@@ -1,2 +1,0 @@
-class SessionConfig:
-    pass

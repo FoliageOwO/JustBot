@@ -3,8 +3,9 @@ from JustBot.objects import Group
 
 class Member:
     def __init__(self,
-                 group: Group, nickname: str, user_id: int, role: str,
-                 last_sent_time: int, join_time: int):
+                 group: Group, nickname: str, user_id: int,
+                 role: str = None, last_sent_time: int = None,
+                 join_time: int = None) -> None:
         self.group = group
         self.nickname = nickname
         self.user_id = user_id

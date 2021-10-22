@@ -1,7 +1,7 @@
-from JustBot.apis import SessionConfig
+from JustBot.apis import AdapterConfig
 
 
-class CQHttpConfig(SessionConfig):
+class CQHttpConfig(AdapterConfig):
     def __init__(self,
                  ws_host: str, ws_port: int,
                  http_host: str, http_port: int,

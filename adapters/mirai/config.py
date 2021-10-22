@@ -1,7 +1,7 @@
-from JustBot.apis.session_config import SessionConfig
+from JustBot.apis import AdapterConfig
 
 
-class MiraiConfig(SessionConfig):
+class MiraiConfig(AdapterConfig):
     def __init__(self,
                  ws_host: str, ws_port: int,
                  http_host: str, http_port: int, session_key: str,

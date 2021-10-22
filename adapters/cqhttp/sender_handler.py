@@ -1,20 +1,21 @@
 from JustBot.objects import Friend, Group
-from JustBot.apis import MessageChain, Config as config
-from JustBot.utils import Logger
+from JustBot.apis import Config as config
+from JustBot.utils import Logger, MessageChain
 from JustBot.application import HTTP_PROTOCOL
 
-from typing import Type, Union
+from typing import Type, Union, NoReturn
 from aiohttp import request
 
 
 class CQHttpSenderHandler:
-    def __init__(self, adapter):
+    def __init__(self, adapter) -> None:
         self.host = adapter.http_host
         self.port = adapter.http_port
         self.utils = adapter.utils
         self.logger = adapter.logger
 
-    async def send_message(self, receiver_type: Type[Union[Friend, Group]], target_id: int, message: MessageChain) -> None:
+    # TODO: 将 SenderHandler 合并到 Adapter 中
+    async def send_message(self, receiver_type: Type[Union[Friend, Group]], target_id: int, message: MessageChain) -> NoReturn:
         string = message.to_code()
         data = {
             'user_id' if receiver_type == Friend else 'group_id': target_id,

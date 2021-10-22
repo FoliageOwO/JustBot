@@ -1,11 +1,12 @@
-from JustBot.apis import Adapter, ListenerManager
+from JustBot.apis import Adapter
 from JustBot.adapters.mirai.config import MiraiConfig
 from JustBot.adapters.mirai.message_handler import MiraiMessageHandler
 from JustBot.adapters.mirai.sender_handler import MiraiSenderHandler
-from JustBot.utils import Logger
+from JustBot.utils import Logger, ListenerManager
 from JustBot.application import HTTP_PROTOCOL, WS_PROTOCOL
 
 from aiohttp import request
+from typing import Any
 
 
 class MiraiAdapter(Adapter):
@@ -53,5 +54,5 @@ class MiraiAdapter(Adapter):
     async def start_listen(self) -> None:
         pass
 
-    def receiver(self, event: str):
+    def receiver(self, event: str) -> Any:
         pass

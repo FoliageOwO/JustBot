@@ -1,21 +1,25 @@
-from JustBot.apis import Listener
 from JustBot.events import PrivateMessageEvent, GroupMessageEvent
 from JustBot.matchers import KeywordsMatcher, CommandMatcher
-from JustBot.utils import Logger
+from JustBot.utils.logger import Logger
+from JustBot.utils.listener import Listener
 
-from typing import Type, Union
+from typing import Type, Union, NoReturn
 
 import asyncio
 
 
 class ListenerManager:
+    """
+    监听管理器 ``ListenerManager`` 类
+    """
+
     def __init__(self) -> None:
         self.l = {}
-        self.logger = Logger('Api/ListenerManager')
+        self.logger = Logger('Util/ListenerManager')
 
     def join(self, listener: Listener, priority: int = 1,
              matcher: Union[KeywordsMatcher, CommandMatcher] = None,
-             parameters_convert: Type[Union[str, list, dict, None]] = str) -> None:
+             parameters_convert: Type[Union[str, list, dict, None]] = str) -> NoReturn:
         lists: list = [] if not str(priority) in self.l.keys() else self.l[str(priority)]
         lists.append({'listener': listener,
                       'matcher': matcher,
@@ -27,7 +31,7 @@ class ListenerManager:
         self.l = new_l
 
     async def execute(self, event_type: Type[Union[PrivateMessageEvent, GroupMessageEvent]],
-                      message: str, event: Union[PrivateMessageEvent, GroupMessageEvent]) -> None:
+                      message: str, event: Union[PrivateMessageEvent, GroupMessageEvent]) -> NoReturn:
         for priority in self.l.keys():
             for listener_obj in self.l[priority]:
                 listener = listener_obj['listener']
@@ -46,7 +50,7 @@ class ListenerManager:
                         await run_target()
 
     async def __run_target(self, listener: Listener, event: Union[PrivateMessageEvent, GroupMessageEvent], message: str,
-                           is_command_matcher: bool, parameters_convert: Type[Union[str, list, dict, None]]):
+                           is_command_matcher: bool, parameters_convert: Type[Union[str, list, dict, None]]) -> NoReturn:
         run_mapping = {
             (lambda: listener.target(event=event)): False,
             (lambda: listener.target(event=event, message=message)): False,
@@ -59,7 +63,7 @@ class ListenerManager:
             try:
                 await target()
                 break
-            except TypeError as e:
+            except TypeError:
                 run_mapping[target] = True
                 continue
 

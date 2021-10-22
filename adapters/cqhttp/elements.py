@@ -5,7 +5,7 @@ from typing import Union
 
 class Utils:
     @staticmethod
-    def remove_brackets(code: str):
+    def remove_brackets(code: str) -> str:
         """
         将完整的 CQ 码 ``code`` 中的最前和最后的 ``中括号`` 删除
 
@@ -20,7 +20,7 @@ class Utils:
         return code[1:-1]
 
     @staticmethod
-    def to_mapping(code: str):
+    def to_mapping(code: str) -> dict:
         """
         将去除中括号后的 CQ 码 ``code`` 中的参数转换为 ``dict``
 
@@ -41,7 +41,7 @@ class Utils:
         return mapping
 
     @staticmethod
-    def get(code: str, name: str):
+    def get(code: str, name: str) -> str:
         """
         将参数值从完整的 CQ 码 ``code`` 中剥离出来
 
@@ -58,15 +58,15 @@ class Utils:
         return mapping[name] if name in mapping.keys() else None
 
     @staticmethod
-    def format_code(name: str, **kwargs):
+    def format_code(cq_name: str, **kwargs) -> str:
         """
-        将传入的 CQ 码名称 ``name`` 和 ``kwargs`` 参数拼合成一个完整的 CQ 码
+        将传入的 CQ 码名称 ``cq_name`` 和 ``kwargs`` 参数拼合成一个完整的 CQ 码
 
         >>> from JustBot.adapters.cqhttp.elements import Utils
         >>> Utils.format_code('face', id=174)
         '[CQ:face,id=174]'
 
-        :param name: CQ 码名称
+        :param cq_name: CQ 码名称
         :param kwargs: CQ 码中的参数
         :return: 完整的 CQ 码
         """
@@ -76,10 +76,10 @@ class Utils:
             v = kwargs[k]
             if v:
                 string = f'{string},{k}={v}'
-        return f'[CQ:{name}{string}]'
+        return f'[CQ:{cq_name}{string}]'
 
     @staticmethod
-    def format_display(name: str, *args):
+    def format_display(name: str, *args) -> str:
         """
         将传入的 CQ 码对应的名称 ``name`` 和 ``args`` 参数拼合成一个可读的字符串
 
@@ -99,7 +99,7 @@ class Utils:
         return f'[{name}{string}]'
 
     @staticmethod
-    def get_element_by_code(code: str):
+    def get_element_by_code(code: str) -> Element:
         """
         将完整的 CQ 码 ``code`` 转换成 ``Element`` 实例
 
@@ -127,7 +127,7 @@ class Utils:
         return mapping[key](**kwargs) if key in mapping.keys() else None
 
     @staticmethod
-    def format_unsupported_display(code: str, colored: bool = False, color: str = 'bold yellow'):
+    def format_unsupported_display(code: str, colored: bool = False, color: str = 'bold yellow') -> str:
         """
         将为支持的完整的 CQ 码转换为暂时字符串
 
@@ -152,9 +152,9 @@ class Utils:
                                     *tuple(Utils.to_mapping(removed_code).values()))
 
     @staticmethod
-    def as_colored_display(element: Element, color: str = 'bold yellow'):
+    def as_colored_display(element: Element, color: str = 'bold yellow') -> str:
         """
-        将 ``Element`` 对象转化为带有颜色的可读的字符串
+        将 ``Element 对象``转化为带有颜色的可读的字符串
 
         >>> from JustBot.adapters.cqhttp.elements import Utils, Face
         >>> Utils.as_colored_display(Face(174))
@@ -170,9 +170,9 @@ class Utils:
         return f'[{color}]{element.as_display()}[/{color}]'
 
     @staticmethod
-    def as_str(element: Element):
+    def as_str(element: Element) -> str:
         """
-        将 ``Element`` 对象转换为 ``<Element:{element_name}|{element_display}>`` 的格式
+        将 ``Element 对象``转换为 ``<Element:{element_name}|{element_display}>`` 的格式
 
         >>> from JustBot.adapters.cqhttp.elements import Utils, Face
         >>> Utils.as_str(Face(174))
@@ -201,20 +201,20 @@ class Text(Element):
     >>> message = MessageChain.create([Text('第一行', '第二行')])
     """
 
-    def __init__(self, *texts):
+    def __init__(self, *texts) -> None:
         self.texts = '\n'.join(texts)
 
-    def as_display(self):
+    def as_display(self) -> str:
         return self.texts.replace('\n', '<\\n>')
 
-    def to_code(self):
+    def to_code(self) -> str:
         return self.texts
 
     @staticmethod
-    def as_code_display(code: str):
+    def as_code_display(code: str) -> str:
         return code
 
-    def __str__(self):
+    def __str__(self) -> str:
         return Utils.as_str(self)
 
 
@@ -229,20 +229,20 @@ class Face(Element):
     >>> MessageChain.create([Face(174)])
     """
 
-    def __init__(self, face_id: int):
+    def __init__(self, face_id: int) -> None:
         self.id = face_id
 
-    def as_display(self):
+    def as_display(self) -> str:
         return Utils.format_display('表情', self.id)
 
-    def to_code(self):
+    def to_code(self) -> str:
         return Utils.format_code('face', id=self.id)
 
     @staticmethod
-    def as_code_display(code: str):
+    def as_code_display(code: str) -> str:
         return Face(int(Utils.get(code, 'id'))).as_display()
 
-    def __str__(self):
+    def __str__(self) -> str:
         return Utils.as_str(self)
 
 
@@ -257,21 +257,21 @@ class At(Element):
     >>> message = MessageChain.create([At(10001), Text('你好!')])
     """
 
-    def __init__(self, qq: Union[str, int], name: str = None):
+    def __init__(self, qq: Union[str, int], name: str = None) -> None:
         self.qq = qq
         self.name = name
 
-    def as_display(self):
+    def as_display(self) -> str:
         return Utils.format_display('艾特', self.qq, self.name)
 
-    def to_code(self):
+    def to_code(self) -> str:
         return Utils.format_code('at', qq=self.qq, name=self.name)
 
     @staticmethod
-    def as_code_display(code: str):
+    def as_code_display(code: str) -> str:
         return At(int(Utils.get(code, 'qq')), Utils.get(code, 'name')).as_display()
 
-    def __str__(self):
+    def __str__(self) -> str:
         return Utils.as_str(self)
 
 
@@ -291,24 +291,24 @@ class Share(Element):
     >>> message = MessageChain.create([At(10001), Share('https://www.xxx.com/', '好东西')])
     """
 
-    def __init__(self, url: str, title: str, content: str = None, image_url: str = None):
+    def __init__(self, url: str, title: str, content: str = None, image_url: str = None) -> None:
         self.url = url
         self.title = title
         self.content = content
         self.image_url = image_url
 
-    def as_display(self):
+    def as_display(self) -> str:
         return Utils.format_display('分享', self.url, self.title, self.content, self.image_url)
 
-    def to_code(self):
+    def to_code(self) -> str:
         return Utils.format_code('share', url=self.url, title=self.title, content=self.content, image=self.image_url)
 
     @staticmethod
-    def as_code_display(code: str):
+    def as_code_display(code: str) -> str:
         return Share(Utils.get(code, 'url'), Utils.get(code, 'title'), Utils.get(code, 'content'),
                      Utils.get(code, 'image')).as_display()
 
-    def __str__(self):
+    def __str__(self) -> str:
         return Utils.as_str(self)
 
 
@@ -320,21 +320,21 @@ class Reply(Element):
     >>> Reply(10086)
     '<Element:Reply|[回复:10086]>'
     >>> from JustBot.apis.message_chain import MessageChain
-    >>> message = MessageChain.create([Reply(10086), Text('你这话说的不对!')])
+    >>> message = MessageChain.create([Reply(10086), Text('Hello!')])
     """
 
-    def __init__(self, message_id: int):
+    def __init__(self, message_id: int) -> None:
         self.message_id = message_id
 
-    def as_display(self):
+    def as_display(self) -> str:
         return Utils.format_display('回复', self.message_id)
 
-    def to_code(self):
+    def to_code(self) -> str:
         return Utils.format_code('reply', id=self.message_id)
 
     @staticmethod
-    def as_code_display(code: str):
+    def as_code_display(code: str) -> str:
         return Reply(int(Utils.get(code, 'id'))).as_display()
 
-    def __str__(self):
+    def __str__(self) -> str:
         return Utils.as_str(self)

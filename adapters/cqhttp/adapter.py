@@ -2,13 +2,13 @@ from JustBot.adapters.cqhttp.config import CQHttpConfig
 from JustBot.adapters.cqhttp.utils import CQHttpUtils
 from JustBot.adapters.cqhttp.message_handler import CQHttpMessageHandler
 from JustBot.adapters.cqhttp.sender_handler import CQHttpSenderHandler
-from JustBot.apis import Adapter, Listener, ListenerManager, Config as global_config
+from JustBot.apis import Adapter, Config as global_config
 from JustBot.events import PrivateMessageEvent, GroupMessageEvent
 from JustBot.matchers import KeywordsMatcher, CommandMatcher
-from JustBot.utils import Logger
+from JustBot.utils import Logger, ListenerManager, Listener
 from JustBot.application import HTTP_PROTOCOL, WS_PROTOCOL
 
-from typing import Type, Union, Callable, Awaitable, List, Coroutine
+from typing import Type, Union, Callable, Awaitable, List, Coroutine, Any
 from websockets import connect as ws_connect, serve as ws_serve, WebSocketServerProtocol
 from aiohttp import request, ClientConnectorError
 
@@ -21,7 +21,7 @@ nest_asyncio.apply()
 
 class CQHttpAdapter(Adapter):
     def __init__(self, config: CQHttpConfig) -> None:
-        self.name = 'CQHttp'
+        self.name = 'CQHTTP'
         self.ws_host = config.ws_host
         self.ws_port = config.ws_port
         self.http_host = config.http_host
@@ -37,17 +37,17 @@ class CQHttpAdapter(Adapter):
         global_config.message_handler = self.message_handler
         global_config.adapter_utils = self.utils
 
-    async def __request_api(self, api_path: str) -> dict:
+    async def _request_api(self, api_path: str) -> dict:
         try:
             async with request('GET', f'{HTTP_PROTOCOL}{self.http_host}:{self.http_port}{api_path}') as response:
                 return (await response.json())['data']
         except ClientConnectorError as e:
-            raise Exception(
-                f'无法连接到 CQHttp 服务, 请检查是否配置完整! {e}')
+            raise ConnectionError(
+                f'无法连接到 CQHTTP 服务, 请检查是否配置完整! {e}')
 
     @property
     async def login_info(self) -> dict:
-        return await self.__request_api('/get_login_info')
+        return await self._request_api('/get_login_info')
 
     @property
     async def account(self) -> int:
@@ -58,9 +58,9 @@ class CQHttpAdapter(Adapter):
         return (await self.login_info)['nickname']
 
     async def check(self) -> None:
-        if not (await self.__request_api('/get_status'))['online']:
+        if not (await self._request_api('/get_status'))['online']:
             raise Exception(
-                '尝试连接 CQHttp 时返回了一个错误的状态, 请尝试重启 CQHttp!')
+                '尝试连接 CQHTTP 时返回了一个错误的状态, 请尝试重启 CQHttp!')
 
     async def start_listen(self) -> None:
         try:
@@ -113,7 +113,7 @@ class CQHttpAdapter(Adapter):
 
     def receiver(self, event: List[Type[Union[PrivateMessageEvent, GroupMessageEvent]]],
                  priority: int = 1, matcher: Union[KeywordsMatcher, CommandMatcher] = None,
-                 parameters_convert: Type[Union[str, list, dict, None]] = str):
+                 parameters_convert: Type[Union[str, list, dict, None]] = str) -> Any:
 
         parameters_convert = parameters_convert if isinstance(matcher, CommandMatcher) else None
 

@@ -6,7 +6,8 @@ import re
 
 
 class KeywordsMatcher:
-    def __init__(self, keyword: Union[List[str], str], match_all_width: bool = False):
+    def __init__(self, keyword: Union[List[str], str],
+                 match_all_width: bool = False) -> None:
         self.keyword = keyword
         self.match_all_width = match_all_width
 

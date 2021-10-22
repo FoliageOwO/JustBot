@@ -6,7 +6,7 @@ from aiohttp import request
 
 
 class CQHttpUtils:
-    def __init__(self, adapter):
+    def __init__(self, adapter) -> None:
         self.host = adapter.http_host
         self.port = adapter.http_port
         self.logger = adapter.logger
