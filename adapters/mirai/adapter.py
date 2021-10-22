@@ -1,12 +1,13 @@
-from JustBot.apis import Adapter
+from JustBot.apis import Adapter, Config as global_config
 from JustBot.adapters.mirai.config import MiraiConfig
 from JustBot.adapters.mirai.message_handler import MiraiMessageHandler
 from JustBot.adapters.mirai.sender_handler import MiraiSenderHandler
+from JustBot.adapters.mirai.utils import MiraiUtils
 from JustBot.utils import Logger, ListenerManager
-from JustBot.application import HTTP_PROTOCOL, WS_PROTOCOL
+from JustBot.application import HTTP_PROTOCOL, WS_PROTOCOL, BotApplication
 
 from aiohttp import request, ClientConnectorError
-from typing import Any
+from typing import Any, NoReturn
 
 
 class MiraiAdapter(Adapter):
@@ -31,21 +32,30 @@ class MiraiAdapter(Adapter):
         global_config.message_handler = self.message_handler
         global_config.adapter_utils = self.utils
 
-    async def _request_api(self, api_path: str) -> dict:
+    async def check(self):
+        await self.verify()
+
+    async def _request_api(self, api_path: str, method: str = 'GET', data: dict = None) -> dict:
         try:
-            async with request('GET', f'{HTTP_PROTOCOL}{self.http_host}:{self.http_port}{api_path}') as response:
+            async with request(method, f'{HTTP_PROTOCOL}{self.http_host}:{self.http_port}{api_path}', data=data) as response:
                 return await response.json()
         except ClientConnectorError as e:
             raise Exception(
                 f'无法连接到 MiraiApiHttp, 请检查是否配置完整! {e}')
 
+    async def verify(self) -> NoReturn:
+        if self.enable_verify:
+            await self._request_api('/verify', 'POST', data={'verifyKey': self.verify_key})
+        else:
+            self.logger.warning('你未启用 `enable_verify` 一步验证, 为了安全请最好启用并配置 `verify_key`!')
+
     @property
     async def login_info(self) -> dict:
-        return await self._request_api('/')
+        return await self._request_api('/botProfile')
 
     @property
     async def nick_name(self) -> str:
-        pass
+        return (await self.login_info)['nickname']
 
     async def start_listen(self) -> None:
         pass

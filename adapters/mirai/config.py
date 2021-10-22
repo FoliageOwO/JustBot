@@ -6,7 +6,7 @@ class MiraiConfig(AdapterConfig):
     def __init__(self,
                  ws_host: str, ws_port: int,
                  http_host: str, http_port: int,
-                 enable_verify: Optional[bool] = True,
+                 enable_verify: Optional[bool] = False,
                  verify_key: Optional[str] = None,
                  ws_reverse: Optional[bool] = False) -> None:
         self.ws_host = ws_host

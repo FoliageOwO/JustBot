@@ -1,7 +1,7 @@
 from JustBot.apis.adapter_config import AdapterConfig
 
 from abc import ABCMeta, abstractmethod
-from typing import Any
+from typing import Any, NoReturn
 
 
 class Adapter(metaclass=ABCMeta):
@@ -19,6 +19,10 @@ class Adapter(metaclass=ABCMeta):
         pass
 
     @abstractmethod
+    def check(self) -> NoReturn:
+        pass
+
+    @abstractmethod
     def login_info(self) -> dict:
         pass
 
@@ -27,7 +31,7 @@ class Adapter(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    async def start_listen(self) -> None:
+    async def start_listen(self) -> NoReturn:
         pass
 
     @abstractmethod

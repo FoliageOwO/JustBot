@@ -37,6 +37,7 @@ class BotApplication:
         self.nick_name = self.coroutine(self.adapter.nick_name)
         self.logger.info(f'登录成功: `{self.nick_name}`.')
         self.set_config()
+        self.coroutine(self.adapter.check())
 
     def set_config(self) -> None:
         config.adapter = self.adapter

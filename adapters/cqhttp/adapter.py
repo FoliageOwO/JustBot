@@ -36,7 +36,11 @@ class CQHttpAdapter(Adapter):
         global_config.listener_manager = self.listener_manager
         global_config.message_handler = self.message_handler
         global_config.adapter_utils = self.utils
-        BotApplication.coroutine(self.check())
+
+    async def check(self) -> None:
+        if not (await self._request_api('/get_status'))['online']:
+            raise Exception(
+                '尝试连接 CQHTTP 时返回了一个错误的状态, 请尝试重启 CQHTTP!')
 
     async def _request_api(self, api_path: str) -> dict:
         try:
@@ -54,12 +58,7 @@ class CQHttpAdapter(Adapter):
     async def nick_name(self) -> str:
         return (await self.login_info)['nickname']
 
-    async def check(self) -> None:
-        if not (await self._request_api('/get_status'))['online']:
-            raise Exception(
-                '尝试连接 CQHTTP 时返回了一个错误的状态, 请尝试重启 CQHTTP!')
-
-    async def start_listen(self) -> None:
+    async def start_listen(self) -> NoReturn:
         try:
             coroutine = await self.__reverse_listen() \
                 if self.ws_reverse else await self.__obverse_listen()
