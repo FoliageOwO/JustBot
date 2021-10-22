@@ -228,6 +228,7 @@ class Face(Element):
     >>> from JustBot.apis.message_chain import MessageChain
     >>> MessageChain.create([Face(174)])
     """
+
     def __init__(self, face_id: int):
         self.id = face_id
 
