@@ -7,7 +7,11 @@ from JustBot.utils import Logger, ListenerManager
 from JustBot.application import HTTP_PROTOCOL, WS_PROTOCOL, CONFIG
 
 from aiohttp import request, ClientConnectorError
-from typing import Any, NoReturn
+from typing import Any, NoReturn, Coroutine
+from websockets import connect as ws_connect
+
+import asyncio
+import json
 
 
 class MiraiAdapter(Adapter):
@@ -54,4 +58,42 @@ class MiraiAdapter(Adapter):
         return (await self.login_info)['nickname']
 
     async def start_listen(self) -> NoReturn:
-        pass
+        try:
+            coroutine = await self.__reverse_listen() \
+                if self.ws_reverse else await self.__obverse_listen()
+            loop = asyncio.get_event_loop()
+            loop.run_until_complete(coroutine)
+            loop.run_forever()
+        except KeyboardInterrupt:
+            self.logger.info('已退出!')
+
+    async def __obverse_listen(self) -> Coroutine:
+        async def run():
+            with self.logger.status(f'正在尝试连接至 {self.name} WebSocket 服务器...') as status:
+                async with ws_connect(f'{WS_PROTOCOL}{self.ws_host}:{self.ws_port}/message?verifyKey={self.verify_key}') as ws:
+                    self.logger.success('连接成功, 开始监听消息!')
+                    status.stop()
+                    while True:
+                        data = json.loads(await ws.recv())
+                        print(data)
+                        await self.auto_handle(data)
+
+        return run()
+
+    async def __reverse_listen(self) -> NoReturn:
+        self.logger.error('暂未支持反向 WebSocket!')
+
+    async def auto_handle(self, data: dict) -> None:
+        if 'session' in data['data']:
+            if data['data']['session'] == 'SINGLE_SESSION':
+                self.logger.success('认证成功!')
+            else:
+                raise Exception(
+                    '认证失败, 请确认相关配置正确!')
+        else:
+            _type = data['data']['type']
+            if not _type.endswith('Event'):
+                await self.message_handler.handle(data['data'])
+            else:
+                # TODO: 增加返回事件
+                pass

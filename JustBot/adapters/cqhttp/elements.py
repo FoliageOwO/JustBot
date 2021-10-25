@@ -121,7 +121,7 @@ class Utils:
 
         kwargs = Utils.to_mapping(Utils.remove_brackets(code))
         mapping = {
-            'text': Text, 'face': Face, 'at': At, 'share': Share, 'reply': Reply
+            'plain': Plain, 'face': Face, 'at': At, 'share': Share, 'reply': Reply
         }
         key = Utils.remove_brackets(code).split(',')[0].split(':')[1]
         return mapping[key](**kwargs) if key in mapping.keys() else None
@@ -186,19 +186,18 @@ class Utils:
 
 
 # TODO: 添加对更多 CQ 码的支持
-
-class Text(Element):
+class Plain(Element):
     """
     普通文本
 
-    >>> from JustBot.adapters.cqhttp.elements import Text
-    >>> Text('Hello, World!')
-    '<Element:Text|Hello, World!>'
+    >>> from JustBot.adapters.cqhttp.elements import Plain
+    >>> Plain('Hello, World!')
+    '<Element:Plain|Hello, World!>'
     >>> # 还支持多行
-    >>> Text('Hello', 'World')
-    '<Element:Text|Hello<\n>World>'
+    >>> Plain('Hello', 'World')
+    '<Element:Plain|Hello<\n>World>'
     >>> from JustBot.apis.message_chain import MessageChain
-    >>> message = MessageChain.create([Text('第一行', '第二行')])
+    >>> message = MessageChain.create([Plain('第一行', '第二行')])
     """
 
     def __init__(self, *texts) -> None:
@@ -254,7 +253,7 @@ class At(Element):
     >>> At(10001)
     '<Element:At|[艾特:10001]>'
     >>> from JustBot.apis.message_chain import MessageChain
-    >>> message = MessageChain.create([At(10001), Text('你好!')])
+    >>> message = MessageChain.create([At(10001), Plain('你好!')])
     """
 
     def __init__(self, qq: Union[str, int], name: str = None) -> None:
@@ -320,7 +319,7 @@ class Reply(Element):
     >>> Reply(10086)
     '<Element:Reply|[回复:10086]>'
     >>> from JustBot.apis.message_chain import MessageChain
-    >>> message = MessageChain.create([Reply(10086), Text('Hello!')])
+    >>> message = MessageChain.create([Reply(10086), Plain('Hello!')])
     """
 
     def __init__(self, message_id: int) -> None:
