@@ -11,7 +11,7 @@ import asyncio
 VERSION = '2.0.1'
 HTTP_PROTOCOL = 'http://'
 WS_PROTOCOL = 'ws://'
-CONFIG = Config(None, None, None, None, None)
+CONFIG = Config(*[None]*5)
 
 # TODO: 可选参数使用 typing.Optional
 class BotApplication:
@@ -73,12 +73,6 @@ class BotApplication:
     @staticmethod
     def coroutine(coroutine: Union[Coroutine, Any]) -> Any:
         return asyncio.run(coroutine)
-
-    @staticmethod
-    def get_config(name: str) -> Any:
-        print(CONFIG.__dict__)
-        print(CONFIG)
-        # return config.__dict__
 
     def receiver(self, event: List[Type[Union[PrivateMessageEvent, GroupMessageEvent]]],
                  priority: int = 1, matcher: Union[KeywordsMatcher, CommandMatcher] = None,
