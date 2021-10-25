@@ -1,8 +1,10 @@
-from JustBot.utils import Logger, MessageChain
-from JustBot.apis import Adapter,  Config as config
+from JustBot.utils import Logger, MessageChain, Listener, ListenerManager
+from JustBot.apis import Adapter, Config as config
 from JustBot.objects import Friend, Group
+from JustBot.events import PrivateMessageEvent, GroupMessageEvent
+from JustBot.matchers import KeywordsMatcher, CommandMatcher
 
-from typing import Callable, Type, Union, Coroutine, Any
+from typing import Callable, Type, Union, Coroutine, Any, List, Awaitable
 
 import asyncio
 
@@ -31,6 +33,7 @@ class BotApplication:
         self.logger = Logger(f'Application/{VERSION}')
         self.sender_handler = self.adapter.sender_handler
         self.adapter_utils = self.adapter.utils
+        self.listener_manager = ListenerManager()
 
         self.logger.info(f'加载 JustBot<v{VERSION}> 中...')
         self.logger.info(f'使用的适配器: `{adapter.name}`.')
@@ -64,3 +67,28 @@ class BotApplication:
     @staticmethod
     def coroutine(coroutine: Union[Coroutine, Any]) -> Any:
         return asyncio.run(coroutine)
+
+    def receiver(self, event: List[Type[Union[PrivateMessageEvent, GroupMessageEvent]]],
+                 priority: int = 1, matcher: Union[KeywordsMatcher, CommandMatcher] = None,
+                 parameters_convert: Type[Union[str, list, dict, None]] = str) -> Any:
+
+        parameters_convert = parameters_convert if isinstance(matcher, CommandMatcher) else None
+
+        def wrapper(target: Callable and Awaitable):
+            if asyncio.iscoroutinefunction(target):
+                if len(event) == 1:
+                    self.logger.info(
+                        f'注册监听器: [blue]{event} [red]([white]{priority}[/white])[/red][/blue] => [light_green]{target}[/light_green].')
+                    self.listener_manager.join(listener=Listener(event[0], target), priority=priority, matcher=matcher,
+                                               parameters_convert=parameters_convert)
+                else:
+                    self.logger.info(
+                        f'注册监听器 (多个事件): [blue]{" & ".join([str(e) for e in event])} [red]([white]{priority}[/white])[/red][/blue] => [light_green]{target}[/light_green].')
+                    for e in event:
+                        self.listener_manager.join(listener=Listener(e, target), priority=priority, matcher=matcher,
+                                                   parameters_convert=parameters_convert)
+            else:
+                self.logger.warning(f'无法注册监听器: 已忽略函数 [light_green]{target}[/light_green], 因为它必须是异步函数!')
+
+        return wrapper
+

@@ -29,7 +29,6 @@ class CQHttpAdapter(Adapter):
         self.ws_reverse = config.ws_reverse
 
         self.logger = Logger(f'Adapter/{self.name}')
-        self.listener_manager = ListenerManager()
         self.utils = CQHttpUtils(self)
         self.sender_handler = CQHttpSenderHandler(self)
         self.message_handler = CQHttpMessageHandler(self)
@@ -37,7 +36,7 @@ class CQHttpAdapter(Adapter):
         global_config.message_handler = self.message_handler
         global_config.adapter_utils = self.utils
 
-    async def check(self) -> None:
+    async def check(self) -> NoReturn:
         if not (await self._request_api('/get_status'))['online']:
             raise Exception(
                 '尝试连接 CQHTTP 时返回了一个错误的状态, 请尝试重启 CQHTTP!')
@@ -106,27 +105,3 @@ class CQHttpAdapter(Adapter):
         else:
             # TODO: 增加返回事件
             pass
-
-    def receiver(self, event: List[Type[Union[PrivateMessageEvent, GroupMessageEvent]]],
-                 priority: int = 1, matcher: Union[KeywordsMatcher, CommandMatcher] = None,
-                 parameters_convert: Type[Union[str, list, dict, None]] = str) -> Any:
-
-        parameters_convert = parameters_convert if isinstance(matcher, CommandMatcher) else None
-
-        def wrapper(target: Callable and Awaitable):
-            if asyncio.iscoroutinefunction(target):
-                if len(event) == 1:
-                    self.logger.info(
-                        f'注册监听器: [blue]{event} [red]([white]{priority}[/white])[/red][/blue] => [light_green]{target}[/light_green].')
-                    self.listener_manager.join(listener=Listener(event[0], target), priority=priority, matcher=matcher,
-                                               parameters_convert=parameters_convert)
-                else:
-                    self.logger.info(
-                        f'注册监听器 (多个事件): [blue]{" & ".join([str(e) for e in event])} [red]([white]{priority}[/white])[/red][/blue] => [light_green]{target}[/light_green].')
-                    for e in event:
-                        self.listener_manager.join(listener=Listener(e, target), priority=priority, matcher=matcher,
-                                                   parameters_convert=parameters_convert)
-            else:
-                self.logger.warning(f'无法注册监听器: 已忽略函数 [light_green]{target}[/light_green], 因为它必须是异步函数!')
-
-        return wrapper

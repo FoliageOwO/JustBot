@@ -24,7 +24,6 @@ class MiraiAdapter(Adapter):
         self.verify_key = config.verify_key
 
         self.logger = Logger(f'Adapter/{self.name}')
-        self.listener_manager = ListenerManager()
         self.utils = MiraiUtils(self)
         self.sender_handler = MiraiSenderHandler(self)
         self.message_handler = MiraiMessageHandler(self)
@@ -32,7 +31,7 @@ class MiraiAdapter(Adapter):
         global_config.message_handler = self.message_handler
         global_config.adapter_utils = self.utils
 
-    async def check(self):
+    async def check(self) -> NoReturn:
         await self.verify()
 
     async def _request_api(self, api_path: str, method: str = 'GET', data: dict = None) -> dict:
@@ -57,8 +56,5 @@ class MiraiAdapter(Adapter):
     async def nick_name(self) -> str:
         return (await self.login_info)['nickname']
 
-    async def start_listen(self) -> None:
-        pass
-
-    def receiver(self, event: str) -> Any:
+    async def start_listen(self) -> NoReturn:
         pass

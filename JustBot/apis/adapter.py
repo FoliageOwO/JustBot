@@ -33,7 +33,3 @@ class Adapter(metaclass=ABCMeta):
     @abstractmethod
     async def start_listen(self) -> NoReturn:
         pass
-
-    @abstractmethod
-    def receiver(self, event: str) -> Any:
-        pass
