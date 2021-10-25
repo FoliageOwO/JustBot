@@ -2,11 +2,11 @@ from JustBot.adapters.cqhttp.config import CQHttpConfig
 from JustBot.adapters.cqhttp.utils import CQHttpUtils
 from JustBot.adapters.cqhttp.message_handler import CQHttpMessageHandler
 from JustBot.adapters.cqhttp.sender_handler import CQHttpSenderHandler
-from JustBot.apis import Adapter, Config as global_config
+from JustBot.apis import Adapter
 from JustBot.events import PrivateMessageEvent, GroupMessageEvent
 from JustBot.matchers import KeywordsMatcher, CommandMatcher
 from JustBot.utils import Logger, ListenerManager, Listener
-from JustBot.application import HTTP_PROTOCOL, WS_PROTOCOL, BotApplication
+from JustBot.application import HTTP_PROTOCOL, WS_PROTOCOL
 
 from typing import Type, Union, Callable, Awaitable, List, Coroutine, Any, NoReturn
 from websockets import connect as ws_connect, serve as ws_serve, WebSocketServerProtocol
@@ -32,9 +32,6 @@ class CQHttpAdapter(Adapter):
         self.utils = CQHttpUtils(self)
         self.sender_handler = CQHttpSenderHandler(self)
         self.message_handler = CQHttpMessageHandler(self)
-        global_config.listener_manager = self.listener_manager
-        global_config.message_handler = self.message_handler
-        global_config.adapter_utils = self.utils
 
     async def check(self) -> NoReturn:
         if not (await self._request_api('/get_status'))['online']:

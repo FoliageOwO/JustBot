@@ -1,5 +1,5 @@
 from JustBot.utils import Logger, MessageChain, Listener, ListenerManager
-from JustBot.apis import Adapter, Config as config
+from JustBot.apis import Adapter, Config
 from JustBot.objects import Friend, Group
 from JustBot.events import PrivateMessageEvent, GroupMessageEvent
 from JustBot.matchers import KeywordsMatcher, CommandMatcher
@@ -11,6 +11,7 @@ import asyncio
 VERSION = '2.0.1'
 HTTP_PROTOCOL = 'http://'
 WS_PROTOCOL = 'ws://'
+CONFIG = Config(None, None, None, None, None)
 
 # TODO: 可选参数使用 typing.Optional
 class BotApplication:
@@ -30,21 +31,26 @@ class BotApplication:
         """
 
         self.adapter = adapter
-        self.logger = Logger(f'Application/{VERSION}')
+        self.nickname = self.coroutine(self.adapter.nick_name)
+        self.listener_manager = ListenerManager()
         self.sender_handler = self.adapter.sender_handler
         self.adapter_utils = self.adapter.utils
-        self.listener_manager = ListenerManager()
+        self.message_handler = self.adapter.message_handler
+        self.set_config()
+        self.logger = Logger(f'Application/{VERSION}')
 
         self.logger.info(f'加载 JustBot<v{VERSION}> 中...')
         self.logger.info(f'使用的适配器: `{adapter.name}`.')
-        self.nick_name = self.coroutine(self.adapter.nick_name)
-        self.logger.info(f'登录成功: `{self.nick_name}`.')
-        self.set_config()
+        self.logger.info(f'登录成功: `{self.nickname}`.')
         self.coroutine(self.adapter.check())
 
     def set_config(self) -> None:
-        config.adapter = self.adapter
-        config.nick_name = self.nick_name
+        CONFIG.adapter = self.adapter
+        CONFIG.nickname = self.nickname
+        CONFIG.listener_manager = self.listener_manager
+        CONFIG.sender_handler = self.sender_handler
+        CONFIG.adapter_utils = self.adapter_utils
+        CONFIG.message_handler = self.message_handler
 
     def start_running(self) -> None:
         self.coroutine(self.adapter.start_listen())
@@ -67,6 +73,12 @@ class BotApplication:
     @staticmethod
     def coroutine(coroutine: Union[Coroutine, Any]) -> Any:
         return asyncio.run(coroutine)
+
+    @staticmethod
+    def get_config(name: str) -> Any:
+        print(CONFIG.__dict__)
+        print(CONFIG)
+        # return config.__dict__
 
     def receiver(self, event: List[Type[Union[PrivateMessageEvent, GroupMessageEvent]]],
                  priority: int = 1, matcher: Union[KeywordsMatcher, CommandMatcher] = None,

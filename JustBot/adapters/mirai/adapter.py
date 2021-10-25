@@ -1,10 +1,10 @@
-from JustBot.apis import Adapter, Config as global_config
+from JustBot.apis import Adapter
 from JustBot.adapters.mirai.config import MiraiConfig
 from JustBot.adapters.mirai.message_handler import MiraiMessageHandler
 from JustBot.adapters.mirai.sender_handler import MiraiSenderHandler
 from JustBot.adapters.mirai.utils import MiraiUtils
 from JustBot.utils import Logger, ListenerManager
-from JustBot.application import HTTP_PROTOCOL, WS_PROTOCOL, BotApplication
+from JustBot.application import HTTP_PROTOCOL, WS_PROTOCOL, CONFIG
 
 from aiohttp import request, ClientConnectorError
 from typing import Any, NoReturn
@@ -27,9 +27,6 @@ class MiraiAdapter(Adapter):
         self.utils = MiraiUtils(self)
         self.sender_handler = MiraiSenderHandler(self)
         self.message_handler = MiraiMessageHandler(self)
-        global_config.listener_manager = self.listener_manager
-        global_config.message_handler = self.message_handler
-        global_config.adapter_utils = self.utils
 
     async def check(self) -> NoReturn:
         await self.verify()

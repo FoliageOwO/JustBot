@@ -1,7 +1,6 @@
 from JustBot.objects import Friend, Group
-from JustBot.apis import Config as config
 from JustBot.utils import Logger, MessageChain
-from JustBot.application import HTTP_PROTOCOL
+from JustBot.application import HTTP_PROTOCOL, CONFIG
 
 from typing import Type, Union, NoReturn
 from aiohttp import request
@@ -30,6 +29,6 @@ class CQHttpSenderHandler:
                     f'发送消息失败: 状态码错误. 返回结果: `{d["wording"]}`.')
             else:
                 if receiver_type == Friend:
-                    nick_name = (await config.adapter_utils.get_friend_by_id(target_id)).nickname
+                    nick_name = (await CONFIG.adapter_utils.get_friend_by_id(target_id)).nickname
                     self.logger.info(
                         f'{message.as_display()} -> {nick_name}({target_id})')
