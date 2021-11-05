@@ -1,9 +1,7 @@
 from .adapters.cqhttp import (CQHttpAdapter, CQHttpConfig, CQHttpUtils,
-                                     CQHttpMessageHandler, CQHttpSenderHandler)
-
+                              CQHttpMessageHandler, CQHttpSenderHandler)
 from .adapters.mirai import (MiraiAdapter, MiraiConfig, MiraiUtils,
-                                    MiraiMessageHandler, MiraiSenderHandler)
-
+                             MiraiMessageHandler, MiraiSenderHandler)
 from .apis import Adapter, Config, Event, AdapterConfig, Element
 from .events import GroupMessageEvent, PrivateMessageEvent
 from .matchers import CommandMatcher, KeywordsMatcher
