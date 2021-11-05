@@ -1,8 +1,8 @@
-from JustBot.utils import Logger, MessageChain, Listener, ListenerManager
-from JustBot.apis import Adapter, Config
-from JustBot.objects import Friend, Group
-from JustBot.events import PrivateMessageEvent, GroupMessageEvent
-from JustBot.matchers import KeywordsMatcher, CommandMatcher
+from .utils import Logger, MessageChain, Listener, ListenerManager
+from .apis import Adapter, Config
+from .objects import Friend, Group
+from .events import PrivateMessageEvent, GroupMessageEvent
+from .matchers import KeywordsMatcher, CommandMatcher
 
 from typing import Callable, Type, Union, Coroutine, Any, List, Awaitable
 
