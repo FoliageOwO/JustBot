@@ -1,4 +1,4 @@
-from JustBot.apis import Element
+from ...apis import Element
 
 from typing import Union
 

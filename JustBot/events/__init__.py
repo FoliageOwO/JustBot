@@ -1,1 +1,1 @@
-from JustBot.events.message_events import PrivateMessageEvent, GroupMessageEvent
+from .message_events import PrivateMessageEvent, GroupMessageEvent

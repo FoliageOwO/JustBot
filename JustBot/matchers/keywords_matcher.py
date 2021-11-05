@@ -1,4 +1,4 @@
-from JustBot.utils.matcher_util import MatcherUtil
+from ..utils import MatcherUtil
 
 from typing import List, Union
 

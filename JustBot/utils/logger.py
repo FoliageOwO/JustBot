@@ -3,7 +3,6 @@ from rich.status import Status
 from typing import Optional, NoReturn
 
 import time
-import sys
 
 
 class Logger:

@@ -1,14 +1,14 @@
-from JustBot.events import PrivateMessageEvent, GroupMessageEvent
+from ..apis import Event
 
 from typing import Union, Callable, Any
+from dataclasses import dataclass
 
 
+@dataclass
 class Listener:
     """
     监听 ``Listener`` 类
     """
 
-    def __init__(self, event: Union[PrivateMessageEvent, GroupMessageEvent],
-                 target: Union[Callable, Any]) -> None:
-        self.event = event
-        self.target = target
+    event: Event
+    target: Union[Callable, Any]

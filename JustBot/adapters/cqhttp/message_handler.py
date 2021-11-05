@@ -1,8 +1,8 @@
-from JustBot.utils import ListenerManager
-from JustBot.events import PrivateMessageEvent, GroupMessageEvent
-from JustBot.objects import Friend, Member, Group
-from JustBot.adapters.cqhttp.elements import Utils as ElementsUtils
-from JustBot.application import CONFIG
+from .elements import Utils as ElementsUtils
+from ...utils import ListenerManager
+from ...events import PrivateMessageEvent, GroupMessageEvent
+from ...objects import Friend
+from ...application import CONFIG
 
 from dataclasses import dataclass
 from typing import NoReturn

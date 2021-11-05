@@ -1,10 +1,10 @@
-from JustBot.apis import Adapter
-from JustBot.adapters.mirai.config import MiraiConfig
-from JustBot.adapters.mirai.message_handler import MiraiMessageHandler
-from JustBot.adapters.mirai.sender_handler import MiraiSenderHandler
-from JustBot.adapters.mirai.utils import MiraiUtils
-from JustBot.utils import Logger, ListenerManager
-from JustBot.application import HTTP_PROTOCOL, WS_PROTOCOL, CONFIG
+from .config import MiraiConfig
+from .message_handler import MiraiMessageHandler
+from .sender_handler import MiraiSenderHandler
+from .utils import MiraiUtils
+from ...apis import Adapter
+from ...utils import Logger
+from ...application import HTTP_PROTOCOL, WS_PROTOCOL, CONFIG
 
 from aiohttp import request, ClientConnectorError
 from typing import Any, NoReturn, Coroutine

@@ -1,7 +1,7 @@
-from JustBot.apis.adapter_config import AdapterConfig
+from .adapter_config import AdapterConfig
 
 from abc import ABCMeta, abstractmethod
-from typing import Any, NoReturn
+from typing import NoReturn
 
 
 class Adapter(metaclass=ABCMeta):

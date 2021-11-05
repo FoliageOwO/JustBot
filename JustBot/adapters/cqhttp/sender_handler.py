@@ -1,6 +1,6 @@
-from JustBot.objects import Friend, Group
-from JustBot.utils import Logger, MessageChain
-from JustBot.application import HTTP_PROTOCOL, CONFIG
+from ...objects import Friend, Group
+from ...utils import MessageChain
+from ...application import HTTP_PROTOCOL, CONFIG
 
 from typing import Type, Union, NoReturn
 from aiohttp import request

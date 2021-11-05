@@ -1,6 +1,7 @@
-from JustBot.apis import Element
+from ...apis import Element
 
 
+# TODO: 完善
 class Utils:
     @staticmethod
     def format_display(name: str, *args) -> str:

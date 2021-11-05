@@ -1,14 +1,12 @@
-from JustBot.adapters.cqhttp.config import CQHttpConfig
-from JustBot.adapters.cqhttp.utils import CQHttpUtils
-from JustBot.adapters.cqhttp.message_handler import CQHttpMessageHandler
-from JustBot.adapters.cqhttp.sender_handler import CQHttpSenderHandler
-from JustBot.apis import Adapter
-from JustBot.events import PrivateMessageEvent, GroupMessageEvent
-from JustBot.matchers import KeywordsMatcher, CommandMatcher
-from JustBot.utils import Logger, ListenerManager, Listener
-from JustBot.application import HTTP_PROTOCOL, WS_PROTOCOL
+from .config import CQHttpConfig
+from .utils import CQHttpUtils
+from .message_handler import CQHttpMessageHandler
+from .sender_handler import CQHttpSenderHandler
+from ...apis import Adapter
+from ...utils import Logger
+from ...application import HTTP_PROTOCOL, WS_PROTOCOL
 
-from typing import Type, Union, Callable, Awaitable, List, Coroutine, Any, NoReturn
+from typing import Coroutine, NoReturn
 from websockets import connect as ws_connect, serve as ws_serve, WebSocketServerProtocol
 from aiohttp import request, ClientConnectorError
 

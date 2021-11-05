@@ -1,2 +1,2 @@
-from JustBot.matchers.keywords_matcher import KeywordsMatcher
-from JustBot.matchers.command_matcher import CommandMatcher
+from .keywords_matcher import KeywordsMatcher
+from .command_matcher import CommandMatcher

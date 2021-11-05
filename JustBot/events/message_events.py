@@ -1,5 +1,5 @@
-from JustBot.objects import Friend, Group, Member
-from JustBot.apis.event import Event
+from ..apis import Event
+from ..objects import Friend, Group, Member
 
 
 class PrivateMessageEvent(Event):

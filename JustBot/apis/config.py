@@ -1,5 +1,5 @@
-from JustBot.apis.adapter import Adapter
-from JustBot.utils import ListenerManager
+from .adapter import Adapter
+from ..utils import ListenerManager
 
 from dataclasses import dataclass
 from typing import AnyStr, Any

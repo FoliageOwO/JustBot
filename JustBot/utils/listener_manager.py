@@ -1,11 +1,9 @@
-from JustBot.events import PrivateMessageEvent, GroupMessageEvent
-from JustBot.matchers import KeywordsMatcher, CommandMatcher
-from JustBot.utils.logger import Logger
-from JustBot.utils.listener import Listener
+from .logger import Logger
+from .listener import Listener
+from ..events import PrivateMessageEvent, GroupMessageEvent
+from ..matchers import KeywordsMatcher, CommandMatcher
 
 from typing import Type, Union, NoReturn
-
-import asyncio
 
 
 class ListenerManager:

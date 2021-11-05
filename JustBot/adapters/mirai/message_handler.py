@@ -1,8 +1,8 @@
-from JustBot.application import CONFIG
-from JustBot.utils.message_chain import MessageChain
-from JustBot.adapters.mirai.elements import Utils as ElementsUtils
-from JustBot.objects import Friend, Group, Member
-from JustBot.events import PrivateMessageEvent, GroupMessageEvent
+from .elements import Utils as ElementsUtils
+from ...application import CONFIG
+from ...objects import Friend, Group, Member
+from ...events import PrivateMessageEvent, GroupMessageEvent
+from ...utils import ListenerManager
 
 from typing import NoReturn
 from dataclasses import dataclass
