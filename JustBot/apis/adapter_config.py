@@ -1,5 +1,7 @@
 class AdapterConfig:
     """
-    适配器配置 ``AdapterConfig`` 基类
+    > 说明
+        适配器配置基类
     """
-    pass
+
+    ...

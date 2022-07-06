@@ -1,2 +1,2 @@
-from .keywords_matcher import KeywordsMatcher
+from .keyword_matcher import KeywordMatcher
 from .command_matcher import CommandMatcher

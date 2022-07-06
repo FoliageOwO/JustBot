@@ -1,13 +1,13 @@
 from .config import MiraiConfig
 from .message_handler import MiraiMessageHandler
-from .sender_handler import MiraiSenderHandler
 from .utils import MiraiUtils
 from ...apis import Adapter
-from ...utils import Logger
-from ...application import HTTP_PROTOCOL, WS_PROTOCOL, CONFIG
+from ...utils import Logger, MessageChain
+from ...contact import Friend, Group
+from ... import HTTP_PROTOCOL, WS_PROTOCOL
 
 from aiohttp import request, ClientConnectorError
-from typing import Any, NoReturn, Coroutine
+from typing import NoReturn, Coroutine, Type, Union
 from websockets import connect as ws_connect
 
 import asyncio
@@ -27,9 +27,8 @@ class MiraiAdapter(Adapter):
         self.enable_verify = config.enable_verify
         self.verify_key = config.verify_key
 
-        self.logger = Logger(f'Adapter/{self.name}')
+        self.logger = Logger('Adapter/%s' % self.name)
         self.utils = MiraiUtils(self)
-        self.sender_handler = MiraiSenderHandler(self)
         self.message_handler = MiraiMessageHandler(self)
 
     async def check(self) -> NoReturn:
@@ -37,11 +36,10 @@ class MiraiAdapter(Adapter):
 
     async def _request_api(self, api_path: str, method: str = 'GET', data: dict = None) -> dict:
         try:
-            async with request(method, f'{HTTP_PROTOCOL}{self.http_host}:{self.http_port}{api_path}', data=data) as response:
+            async with request(method, '%s%s:%s%s' % (HTTP_PROTOCOL, self.http_host, self.http_port, api_path), data=data) as response:
                 return await response.json()
         except ClientConnectorError as e:
-            raise Exception(
-                f'无法连接到 MiraiApiHttp, 请检查是否配置完整! {e}')
+            raise Exception('无法连接到 MiraiApiHttp, 请检查是否配置完整! %s' % e)
 
     async def verify(self) -> NoReturn:
         if self.enable_verify:
@@ -69,8 +67,8 @@ class MiraiAdapter(Adapter):
 
     async def __obverse_listen(self) -> Coroutine:
         async def run():
-            with self.logger.status(f'正在尝试连接至 {self.name} WebSocket 服务器...') as status:
-                async with ws_connect(f'{WS_PROTOCOL}{self.ws_host}:{self.ws_port}/message?verifyKey={self.verify_key}') as ws:
+            with self.logger.status('正在尝试连接至 %s WebSocket 服务器...' % self.name) as status:
+                async with ws_connect('%s%s:%s/message?verifyKey=%s' % (WS_PROTOCOL, self.ws_host, self.ws_port, self.verify_key)) as ws:
                     self.logger.success('连接成功, 开始监听消息!')
                     status.stop()
                     while True:
@@ -88,8 +86,7 @@ class MiraiAdapter(Adapter):
             if data['data']['session'] == 'SINGLE_SESSION':
                 self.logger.success('认证成功!')
             else:
-                raise Exception(
-                    '认证失败, 请确认相关配置正确!')
+                raise Exception('认证失败, 请确认相关配置正确!')
         else:
             _type = data['data']['type']
             if not _type.endswith('Event'):
@@ -97,3 +94,6 @@ class MiraiAdapter(Adapter):
             else:
                 # TODO: 增加返回事件
                 pass
+
+    async def send_message(self, receiver_type: Type[Union[Friend, Group]], target_id: int, message: MessageChain) -> NoReturn:
+        pass

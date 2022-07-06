@@ -1,73 +1,56 @@
 from .logger import Logger
 from .listener import Listener
-from ..events import PrivateMessageEvent, GroupMessageEvent
-from ..matchers import KeywordsMatcher, CommandMatcher
+from ..apis import Event
+from ..matchers import KeywordMatcher, CommandMatcher
+from ..utils import MessageChain, PriorityQueue
 
-from typing import Type, Union, NoReturn
+from typing import Type, Union, NoReturn, Any
 
 
 class ListenerManager:
     """
-    监听管理器 ``ListenerManager`` 类
+    > 说明
+        监听器管理类
     """
 
     def __init__(self) -> None:
-        self.l = {}
+        self.listeners = dict()
+        self.pq = PriorityQueue()
         self.logger = Logger('Util/ListenerManager')
 
-    def join(self, listener: Listener, priority: int = 1,
-             matcher: Union[KeywordsMatcher, CommandMatcher] = None,
+    def join(self, listener: Listener, priority: int = 5,
+             matcher: Union[KeywordMatcher, CommandMatcher] = None,
              parameters_convert: Type[Union[str, list, dict, None]] = str) -> NoReturn:
-        lists: list = [] if not str(priority) in self.l.keys() else self.l[str(priority)]
-        lists.append({'listener': listener,
-                      'matcher': matcher,
-                      'parameters_convert': parameters_convert})
-        self.l[str(priority)] = lists
-        new_l = {}
-        for i in sorted(self.l.items(), reverse=True):
-            new_l[i[0]] = i[1]
-        self.l = new_l
+        """
+        > 说明
+            向监听器管理添加新的监听器.
+        > 参数
+            + listener [Listener]: 监听器
+            + priority [int]: 优先级 (越小越优先, 不能小于 0) [default=5]
+            + matcher [KeywordMatcher | CommandMatcher]: 匹配器 [可选]
+            + parameters_convert [type[str] | type[list] | type[dict] | None]: 参数转换类型 [default=str]
+        """
 
-    async def execute(self, event_type: Type[Union[PrivateMessageEvent, GroupMessageEvent]],
-                      message: str, event: Union[PrivateMessageEvent, GroupMessageEvent]) -> NoReturn:
-        for priority in self.l.keys():
-            for listener_obj in self.l[priority]:
-                listener = listener_obj['listener']
-                if listener.event == event_type:
-                    matcher = listener_obj['matcher']
+        self.pq.join(dict(listener=listener, matcher=matcher, convert=parameters_convert), priority)
 
-                    async def run_target():
-                        await self.__run_target(listener, event, message,
-                                                isinstance(matcher, CommandMatcher),
-                                                listener_obj['parameters_convert'])
+    async def execute(self, event_type: Type[Event], message: str, message_chain: MessageChain, event: Event) -> NoReturn:
+        for data in self.pq:
+            listener: Listener = data['listener']
+            matcher: Union[KeywordMatcher, CommandMatcher] = data['matcher']
+            convert: Any = data['convert']
+            is_command_matcher = isinstance(matcher, CommandMatcher)
 
-                    if matcher:
-                        if matcher.match(message):
-                            await run_target()
-                    else:
-                        await run_target()
+            if listener.event == event_type:
+                execute_function = lambda: listener.target(
+                    event=event, message=message, message_chain=message_chain,
+                    command=message.split()[0] if is_command_matcher else None,
+                    parameters=self.__get_parameters(message, convert) if is_command_matcher else None)
+                await execute_function() \
+                    if not matcher else \
+                    (await execute_function() if matcher.match(message_chain) else None)
+        self.pq.rejoin()
 
-    async def __run_target(self, listener: Listener, event: Union[PrivateMessageEvent, GroupMessageEvent], message: str,
-                           is_command_matcher: bool, parameters_convert: Type[Union[str, list, dict, None]]) -> NoReturn:
-        run_mapping = {
-            (lambda: listener.target(event=event)): False,
-            (lambda: listener.target(event=event, message=message)): False,
-            (lambda: listener.target(event=event,
-                                     command=message.split()[0] if is_command_matcher else None,
-                                     parameters=self.__get_parameters(message, parameters_convert)
-                                     if is_command_matcher else None)): False
-        }
-        for target in run_mapping.keys():
-            try:
-                await target()
-                break
-            except TypeError:
-                run_mapping[target] = True
-                continue
-
-        if list(set(run_mapping.values())) == [True]:
-            self.logger.warning(f'无法回调函数 [light_green]{listener.target}[/light_green], 因为它的定义不规范!')
-
+    # TODO: 优化 parameters 获取
     @staticmethod
     def __get_parameters(message: str, parameters_convert: Type[Union[str, list, dict, None]]) -> dict:
         def __get_multi_parameters() -> list or dict:

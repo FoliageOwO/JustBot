@@ -1,4 +1,10 @@
 *.pyc
 */__pycache__
 .vscode/
-test*.py
+test*
+
+*.spec
+dist
+build
+*egg-info
+temp

@@ -3,70 +3,72 @@ from typing import Any
 
 class Element(metaclass=ABCMeta):
     """
-    消息链元素 ``Element`` 抽象类
+    > 说明
+        消息链元素抽象类.
     """
 
+    __type__: str
+    __code__: str
+
     @abstractmethod
-    def __init__(self) -> None:
-        pass
+    def __init__(self, *args, **kwargs) -> None:
+        ...
 
     @abstractmethod
     def as_display(self) -> str:
         """
-        将 ``Element 对象`` 转换为 ``可读的字符串``
-
-        >>> face = Face(174)
-        >>> face.as_display()
-        '[表情:174]'
-
-        :return: 转换后的字符串
+        > 说明
+            将 ``Element 对象`` 转换为 ``易读字符串``.
+        > 返回
+            * str: 转换后的字符串
+        > 示例
+            >>> Foo(bar=1).as_display()
+            '[Foo:1]'
         """
 
-        pass
+        ...
 
     @abstractmethod
     def to_code(self) -> Any:
         """
-        将 ``Element 对象`` 转换为 ``适配器特有形式``
-
-        >>> from JustBot.adapters.cqhttp import Face as CQHttpFace
-        >>> face = CQHttpFace(174)
-        >>> face.to_code()
-        '[CQ:face,id=174]'
-        >>> from JustBot.adapters.mirai import Face as MiraiFace
-        >>> face2 = MiraiFace(174)
-        >>> face2.to_code()
-        {'type': 'Face', 'faceId': 174}
-
-        :return: 转换后的特有形式
+        > 说明
+            将 ``Element 对象`` 转换为 ``适配器的特有形式``.
+        > 返回
+            * Any: 转换后的形式
+        > 示例
+            >>> CQ_Foo(bar=1).to_code()
+            '[CQ:foo,bar=1]'
+            >>> MIRAI_Foo(bar=1).to_code()
+            {'type': 'foo', 'bar': 1}
         """
 
-        pass
+        ...
 
     @staticmethod
     @abstractmethod
     def as_code_display(code: Any) -> str:
         """
-        将 ``Element 对象`` 对应的 ``适配器特有形式`` 转换为 ``可读的字符串``
-
-        >>> from JustBot.adapters.cqhttp import Face as CQHttpFace
-        >>> CQHttpFace.as_code_display('[CQ:face,id=174]')
-        '[表情:174]'
-        >>> from JustBot.adapters.mirai import Face as MiraiFace
-        >>> MiraiFace.as_code_display({'type': 'Face', 'faceId': 174})
-        '[表情:174]'
-
-        :return: 可读的字符串
+        > 说明
+            将 ``Element 对象`` 对应的 ``适配器特有形式`` 转换为 ` 易读字符串``.
+        > 参数
+            * code [Any]: 适配器特有形式
+        > 返回
+            * str: 易读字符串
         """
 
-        pass
+        ...
 
     @abstractmethod
     def __str__(self) -> str:
         """
-        返回 ``Element 对象`` 的描述
-
-        :return: ``Element 对象`` 的描述
+        > 说明
+            返回 ``Element 对象`` 的描述.
+        > 返回
+            * str: 描述
         """
 
-        pass
+        ...
+
+    @property
+    def sendable(self) -> bool:
+        return not self.__class__.__name__.startswith('_')

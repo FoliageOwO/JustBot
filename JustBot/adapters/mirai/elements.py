@@ -8,8 +8,8 @@ class Utils:
         string = ''
         for i in args:
             if i:
-                string = f'{string}:{i}'
-        return f'[{name}{string}]'
+                string = '%s:%s' % (string, i)
+        return '[%s%s]' % (name, string)
 
     @staticmethod
     def format_code(el_name: str, **kwargs) -> dict:
@@ -28,8 +28,8 @@ class Utils:
     def format_unsupported_display(code: dict, colored: bool = False, color: str = 'bold yellow') -> str:
         _code = code.copy()
         _type = _code.pop('type')
-        result = f'|{type}'
-        result = f'[{color}]{result}[/{color}]' if colored else result
+        result = '|%s' % type
+        result = '[%s]%s[/%s]' % (color, result, color) if colored else result
         return Utils.format_display(result, *tuple(_code.values())) if _type != 'Source' else ''
 
 

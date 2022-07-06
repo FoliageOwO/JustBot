@@ -1,13 +1,11 @@
 from .elements import Utils as ElementsUtils
-from ...application import CONFIG
-from ...objects import Friend, Group, Member
+from ...contact import Friend, Group, Member
 from ...events import PrivateMessageEvent, GroupMessageEvent
 from ...utils import ListenerManager
+from ... import CONFIG
 
 from typing import NoReturn
 from dataclasses import dataclass
-
-import re
 
 
 @dataclass
@@ -45,10 +43,9 @@ class MiraiMessageHandler:
                 d.colored_message = ElementsUtils.format_unsupported_display(i, True)
 
         if d.type == 'FriendMessage':
-            self.logger.info(f'{d.nickname}({d.id}) -> {d.colored_message}')
+            self.logger.info('%s(%s) -> %s' % (d.nickname, d.id, d.colored_message))
         elif d.type == 'GroupMessage':
-            self.logger.info(
-                f'{d.group["name"]}({d.group["id"]}) -> {d.memberName}({d.id}) -> {d.colored_message}')
+            self.logger.info('%s(%s) -> %s(%s) -> %s' % (d.group['name'], d.group['id'], d.memberName, d.id))
         await self.trigger(d.type, d.message)
 
     async def trigger(self, message_type: str, message: str) -> NoReturn:

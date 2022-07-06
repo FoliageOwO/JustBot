@@ -15,5 +15,4 @@ class MiraiConfig(AdapterConfig):
     verify_key: str = None
 
     if enable_verify and verify_key is None:
-        raise ValueError(
-            f'当 `enable_verify` 启用的时候 `verify_key` 不能为空!')
+        raise ValueError('当 `enable_verify` 启用的时候 `verify_key` 不能为空!')

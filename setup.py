@@ -1,0 +1,41 @@
+from setuptools import setup
+
+setup(
+    name='JustBot',
+    version='2.0.2',
+    description='一个轻量的 qqbot 简易异步 SDK.',
+    author='WindLeaf_qwq',
+    author_email='mc.windleaf@foxmail.com',
+    py_modules=[
+        'JustBot.application',
+        'JustBot.adapters.cqhttp.adapter',
+        'JustBot.adapters.cqhttp.config',
+        'JustBot.adapters.cqhttp.elements',
+        'JustBot.adapters.cqhttp.message_handler',
+        'JustBot.adapters.cqhttp.sender_handler',
+        'JustBot.adapters.cqhttp.utils',
+        'JustBot.adapters.mirai.adapter',
+        'JustBot.adapters.mirai.config',
+        'JustBot.adapters.mirai.elements',
+        'JustBot.adapters.mirai.message_handler',
+        'JustBot.adapters.mirai.sender_handler',
+        'JustBot.adapters.mirai.utils',
+        'JustBot.apis.adapter',
+        'JustBot.apis.adapter_config',
+        'JustBot.apis.config',
+        'JustBot.apis.element',
+        'JustBot.apis.event',
+        'JustBot.events.message_events',
+        'JustBot.events.notice_events',
+        'JustBot.matchers.command_matcher',
+        'JustBot.matchers.keyword_matcher',
+        'JustBot.contact.friend',
+        'JustBot.contact.group',
+        'JustBot.contact.member',
+        'JustBot.utils.listener',
+        'JustBot.utils.listener_manager',
+        'JustBot.utils.logger',
+        'JustBot.utils.matcher_util',
+        'JustBot.utils.message_chain'
+    ]
+)
