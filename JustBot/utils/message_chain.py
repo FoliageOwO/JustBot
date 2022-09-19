@@ -24,14 +24,14 @@ class MessageChain:
 
     def append_elements(self, *elements: Element) -> NoReturn:
         self.elements.extend(list(elements))
-        self.result = ''.join([element.to_code() for element in self.elements])
+        self.result = ''.join([element.to_code() for element in self.elements if element != None])
         self.sendable if False not in list(elements) else self.sendable
 
     def to_code(self) -> str:
         return self.result
 
     def as_display(self) -> str:
-        return ''.join([element.as_display() for element in self.elements])
+        return ''.join([element.as_display() for element in self.elements if element != None])
 
     def __str__(self) -> str:
         return '<MessageChain[%s]:%s>' % (len(self.elements), ','.join([element.__class__.__name__ for element in self.elements]))

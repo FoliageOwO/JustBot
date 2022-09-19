@@ -121,7 +121,8 @@ class Utils:
         for i in [element.__dict__[k] for k in element.__dict__ if k not in ignore]:
             if i is not None:
                 string = '%s|%s' % (string, i)
-        return '[%s%s]' % (element.__type__, string)
+        is_element = element is Element
+        return '[%s%s]' % (element.__type__ if is_element else '[red]ERROR[/red]', string if is_element else '')
 
     @staticmethod
     def get_element_by_code(code: str) -> Element:
@@ -609,7 +610,7 @@ class Music(Element):
             title='Music', content='Music that beautiful', image='https://example.com/music.png')
     """
     
-    __type__ = 'Music'
+    __type__ = '音乐分享'
     __code__ = 'music'
 
     class MusicType(Enum):
