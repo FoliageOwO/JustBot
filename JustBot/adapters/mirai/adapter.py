@@ -27,7 +27,7 @@ class MiraiAdapter(Adapter):
         self.enable_verify = config.enable_verify
         self.verify_key = config.verify_key
 
-        self.logger = Logger('Adapter/%s' % self.name)
+        self.logger = Logger('Adapter/[bold bright_cyan]%s[/bold bright_cyan]' % self.name)
         self.utils = MiraiUtils(self)
         self.message_handler = MiraiMessageHandler(self)
 

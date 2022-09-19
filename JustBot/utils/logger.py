@@ -9,7 +9,7 @@ class Logger:
     def __init__(self, logger_name: str) -> None:
         self.logger_name = logger_name
         self.console = Console()
-        self.formatter = '[green][%s][/green] [bright_cyan][%s][/bright_cyan] %s'
+        self.formatter = '[white][%s][/white] [%s] %s'
         self._update_time()
         self.lambda_ = lambda msg, color: self._print(self.formatter % (self.time, self.logger_name, '[%s]%s[%s]' % (color, msg, color)))
         self.lambdas = {

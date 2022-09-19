@@ -34,7 +34,7 @@ class CQHttpAdapter(Adapter):
         self.http_host = config.http_host
         self.http_port = config.http_port
         self.ws_reverse = config.ws_reverse
-        self.logger = Logger('Adapter/%s' % self.name)
+        self.logger = Logger('Adapter/[bold magenta]%s[/bold magenta]' % self.name)
         self.utils = CQHttpUtils(self)
         self.message_handler = CQHttpMessageHandler(self)
         self.websocket = None
