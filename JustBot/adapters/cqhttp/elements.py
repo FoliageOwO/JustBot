@@ -50,7 +50,7 @@ class Utils:
         args = dict()
         for i in code.split(',')[1:]:
             k = i.split('=')
-            if k != ['']:
+            if len(k) != 1:
                 args[k[0]] = k[1]
         return args
 
@@ -195,8 +195,7 @@ class Utils:
 
         split_color = 'bold red'
         color = 'bold yellow'
-        return ('[%s]%s[/%s]' % (color, element.as_display(), color)).replace('|',
-                                                                              '[%s]|[/%s]' % (split_color, split_color))
+        return ('[%s]%s[/%s]' % (color, element.as_display(), color)).replace('|', '[%s]|[/%s]' % (split_color, split_color))
 
     @staticmethod
     def as_str(element: Element) -> str:
