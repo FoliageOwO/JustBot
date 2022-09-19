@@ -1,6 +1,6 @@
 # JustBot
 
-`JustBot` 是一个轻量的 qqbot 简易异步 SDK.
+一个轻量的 qqbot 简易框架
 
 ## 适配器 Adapter
 
@@ -16,7 +16,7 @@
 
 ## 关于
 
-此项目只是闲暇时间的随手之作, 可能包含让人呕血的代码, 也包含一些 `useless` 代码.
+此项目只是闲暇时间的随手之作, 可能包含让人呕血的代码, 也包含一些 `shitcode`.
 
 部分实现参考了 `GraiaApplication`.
 
