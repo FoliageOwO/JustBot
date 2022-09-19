@@ -1,6 +1,6 @@
 from rich.console import Console
 from rich.status import Status
-from typing import Optional, NoReturn
+from typing import Optional
 
 import time
 
@@ -21,9 +21,9 @@ class Logger:
         for k in self.lambdas:
             self.__setattr__(k, self.lambdas[k])
 
-    def _update_time(self) -> NoReturn:
+    def _update_time(self) -> None:
         self.time = time.strftime('%H:%M:%S', time.localtime())
 
-    def _print(self, message: str) -> NoReturn:
+    def _print(self, message: str) -> None:
         self._update_time()
         self.console.print(message)

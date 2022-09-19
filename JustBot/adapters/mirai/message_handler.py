@@ -4,7 +4,6 @@ from ...events import PrivateMessageEvent, GroupMessageEvent
 from ...utils import ListenerManager
 from ... import CONFIG
 
-from typing import NoReturn
 from dataclasses import dataclass
 
 
@@ -22,7 +21,7 @@ class MiraiMessageHandler:
         self.logger = adapter.logger
         self.utils = adapter.utils
 
-    async def handle(self, data: dict) -> NoReturn:
+    async def handle(self, data: dict) -> None:
         for k in data.keys():
             v = data[k]
             if type(v) is not dict:
@@ -48,7 +47,7 @@ class MiraiMessageHandler:
             self.logger.info('%s(%s) -> %s(%s) -> %s' % (d.group['name'], d.group['id'], d.memberName, d.id))
         await self.trigger(d.type, d.message)
 
-    async def trigger(self, message_type: str, message: str) -> NoReturn:
+    async def trigger(self, message_type: str, message: str) -> None:
         lm: ListenerManager = CONFIG.listener_manager
         if message_type == 'FriendMessage':
             event = PrivateMessageEvent(message, d.messageChain[0]['id'], message,

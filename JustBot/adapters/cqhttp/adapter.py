@@ -6,7 +6,7 @@ from ...utils import Logger, MessageChain
 from ...contact import Friend, Group
 from ... import HTTP_PROTOCOL, WS_PROTOCOL, CONFIG
 
-from typing import Coroutine, NoReturn, Union, Any
+from typing import Coroutine, Union, Any
 from websockets import connect as ws_connect, serve as ws_serve, WebSocketServerProtocol
 from aiohttp import request, ClientConnectorError
 from overrides import overrides
@@ -40,7 +40,7 @@ class CQHttpAdapter(Adapter):
         self.websocket = None
 
     @overrides
-    async def check(self) -> NoReturn:
+    async def check(self) -> None:
         if not (await self._request_api('/get_status'))['online']:
             raise ConnectionError('尝试连接 CQHTTP 时返回了一个错误的状态, 请尝试重启 CQHTTP!')
 
@@ -103,7 +103,7 @@ class CQHttpAdapter(Adapter):
                         await asyncio.Future()
         return run()
 
-    async def auto_handle(self, data: dict) -> NoReturn:
+    async def auto_handle(self, data: dict) -> None:
         _type = data['post_type']
         if _type == 'message':
             await self.message_handler.handle(data)

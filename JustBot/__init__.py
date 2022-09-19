@@ -3,7 +3,7 @@ from .apis import Adapter, Config, Event, Element
 from .contact import Friend, Group
 from .matchers import KeywordMatcher, CommandMatcher
 
-from typing import Type, Union, Coroutine, Any, List, Awaitable, Tuple, NoReturn, Callable
+from typing import Type, Union, Coroutine, Any, List, Awaitable, Tuple, Callable
 from rich.traceback import install
 
 import asyncio
@@ -38,14 +38,14 @@ class BotApplication:
         self.logger.info('登录成功: `%s`.' % self.nickname)
         self.coroutine(self.adapter.check())
 
-    def set_config(self) -> NoReturn:
+    def set_config(self) -> None:
         for k in self.__dict__.keys():
             CONFIG.__setattr__(k, self.__dict__[k])
 
-    def start_running(self) -> NoReturn:
+    def start_running(self) -> None:
         self.coroutine(self.adapter.start_listen())
 
-    async def send_msg(self, target: Union[Friend, Group], message: Union[MessageChain, str]) -> NoReturn:
+    async def send_msg(self, target: Union[Friend, Group], message: Union[MessageChain, str]) -> None:
         """
         > 说明
             向联系人发送消息

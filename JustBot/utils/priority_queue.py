@@ -1,4 +1,4 @@
-from typing import Any, NoReturn, NewType, Iterator
+from typing import Any, NewType, Iterator
 
 import heapq
 
@@ -26,13 +26,13 @@ class PriorityQueue(Iterator):
         self.priorities = []
         self.index = 0
 
-    def join(self, item: T, priority: int) -> NoReturn:
+    def join(self, item: T, priority: int) -> None:
         heapq.heappush(self.queue, (priority, self.index, item))
         self.index += 1
         self.items.append(item)
         self.priorities.append(priority)
 
-    def rejoin(self) -> NoReturn:
+    def rejoin(self) -> None:
         self.index = 0
         for item in self.items:
             heapq.heappush(self.queue, (self.priorities[self.items.index(item)], self.index, item))

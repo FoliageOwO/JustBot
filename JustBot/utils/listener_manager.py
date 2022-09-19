@@ -4,7 +4,7 @@ from ..apis import Event
 from ..matchers import KeywordMatcher, CommandMatcher
 from ..utils import MessageChain, PriorityQueue
 
-from typing import Type, Union, NoReturn, Any
+from typing import Type, Union, Any
 
 
 class ListenerManager:
@@ -20,7 +20,7 @@ class ListenerManager:
 
     def join(self, listener: Listener, priority: int = 5,
              matcher: Union[KeywordMatcher, CommandMatcher] = None,
-             parameters_convert: Type[Union[str, list, dict, None]] = str) -> NoReturn:
+             parameters_convert: Type[Union[str, list, dict, None]] = str) -> None:
         """
         > 说明
             向监听器管理添加新的监听器.
@@ -33,7 +33,7 @@ class ListenerManager:
 
         self.pq.join(dict(listener=listener, matcher=matcher, convert=parameters_convert), priority)
 
-    async def execute(self, event_type: Type[Event], message: str, message_chain: MessageChain, event: Event) -> NoReturn:
+    async def execute(self, event_type: Type[Event], message: str, message_chain: MessageChain, event: Event) -> None:
         for data in self.pq:
             listener: Listener = data['listener']
             matcher: Union[KeywordMatcher, CommandMatcher] = data['matcher']

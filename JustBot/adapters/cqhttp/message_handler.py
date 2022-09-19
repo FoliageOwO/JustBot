@@ -5,7 +5,7 @@ from ...contact import Friend
 from ... import CONFIG
 
 from dataclasses import dataclass
-from typing import NoReturn, Tuple
+from typing import Tuple
 
 import re
 
@@ -58,7 +58,7 @@ class CQHttpMessageHandler:
             chain.append_elements(ElementsUtils.get_element_by_code(replaced_string))
         return chain, chain.as_display(), colored_message
 
-    async def handle(self, data: dict) -> NoReturn:
+    async def handle(self, data: dict) -> None:
         for k in data.keys():
             v = data[k]
             if type(v) is not dict:
@@ -75,7 +75,7 @@ class CQHttpMessageHandler:
             self.logger.info('%s(%s) -> %s(%s) -> %s' % ((await self.utils.get_group_by_id(d.group_id)).group_name, d.group_id, d.nickname, d.user_id, d.colored_message))
         await self.trigger()
 
-    async def trigger(self) -> NoReturn:
+    async def trigger(self) -> None:
         lm: ListenerManager = CONFIG.listener_manager
         if d.message_type == 'private':
             event = PrivateMessageEvent(d.message, d.message_id, d.raw_message, d.message_chain,

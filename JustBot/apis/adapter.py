@@ -2,7 +2,7 @@ from ..contact import Friend, Group
 from .adapter_config import AdapterConfig
 
 from abc import ABCMeta, abstractmethod
-from typing import NoReturn, Any, Union
+from typing import Any, Union
 from rich.traceback import install
 
 install()
@@ -24,7 +24,7 @@ class Adapter(metaclass=ABCMeta):
         ...
 
     @abstractmethod
-    def check(self) -> NoReturn:
+    def check(self) -> None:
         ...
 
     @abstractmethod

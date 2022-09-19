@@ -7,7 +7,7 @@ from ...contact import Friend, Group
 from ... import HTTP_PROTOCOL, WS_PROTOCOL
 
 from aiohttp import request, ClientConnectorError
-from typing import NoReturn, Coroutine, Type, Union
+from typing import Coroutine, Type, Union
 from websockets import connect as ws_connect
 
 import asyncio
@@ -31,7 +31,7 @@ class MiraiAdapter(Adapter):
         self.utils = MiraiUtils(self)
         self.message_handler = MiraiMessageHandler(self)
 
-    async def check(self) -> NoReturn:
+    async def check(self) -> None:
         await self.verify()
 
     async def _request_api(self, api_path: str, method: str = 'GET', data: dict = None) -> dict:
@@ -41,7 +41,7 @@ class MiraiAdapter(Adapter):
         except ClientConnectorError as e:
             raise Exception('无法连接到 MiraiApiHttp, 请检查是否配置完整! %s' % e)
 
-    async def verify(self) -> NoReturn:
+    async def verify(self) -> None:
         if self.enable_verify:
             await self._request_api('/verify', 'POST', data={'verifyKey': self.verify_key})
         else:
@@ -55,7 +55,7 @@ class MiraiAdapter(Adapter):
     async def nick_name(self) -> str:
         return (await self.login_info)['nickname']
 
-    async def start_listen(self) -> NoReturn:
+    async def start_listen(self) -> None:
         try:
             coroutine = await self.__reverse_listen() \
                 if self.ws_reverse else await self.__obverse_listen()
@@ -78,7 +78,7 @@ class MiraiAdapter(Adapter):
 
         return run()
 
-    async def __reverse_listen(self) -> NoReturn:
+    async def __reverse_listen(self) -> None:
         self.logger.error('暂未支持反向 WebSocket!')
 
     async def auto_handle(self, data: dict) -> None:
@@ -95,5 +95,5 @@ class MiraiAdapter(Adapter):
                 # TODO: 增加返回事件
                 pass
 
-    async def send_message(self, receiver_type: Type[Union[Friend, Group]], target_id: int, message: MessageChain) -> NoReturn:
+    async def send_message(self, receiver_type: Type[Union[Friend, Group]], target_id: int, message: MessageChain) -> None:
         pass

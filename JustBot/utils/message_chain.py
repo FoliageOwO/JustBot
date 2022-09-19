@@ -1,7 +1,7 @@
 from .logger import Logger
 from ..apis import Element
 
-from typing import List, Tuple, NoReturn, Any, Union, Type
+from typing import List, Tuple, Any, Union, Type
 
 
 class MessageChain:
@@ -22,7 +22,7 @@ class MessageChain:
             strings.append(element.to_code())
         return MessageChain(strings, list(elements), False not in [element.sendable for element in elements])
 
-    def append_elements(self, *elements: Element) -> NoReturn:
+    def append_elements(self, *elements: Element) -> None:
         self.elements.extend(list(elements))
         self.result = ''.join([element.to_code() for element in self.elements if element != None])
         self.sendable if False not in list(elements) else self.sendable
