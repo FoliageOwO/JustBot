@@ -24,8 +24,6 @@ class MessageChain:
 
     def append_elements(self, *elements: Element) -> NoReturn:
         self.elements.extend(list(elements))
-        if (len(self.elements) > 10):
-            exit(-1)
         self.result = ''.join([element.to_code() for element in self.elements])
         self.sendable if False not in list(elements) else self.sendable
 
