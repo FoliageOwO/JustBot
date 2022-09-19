@@ -26,7 +26,7 @@ class CQHttpUtils:
         for i in await self.request_api('/get_group_list'):
             if i['group_id'] == group_id:
                 return Group(i['group_id'], i['group_name'], i['max_member_count'], i['member_count'],
-                             i['group_level'], i['group_create_time'], i['group_memo'])
+                             i['group_level'], i['group_create_time'])
         self.logger.error('无法找到群 `%s`!' % group_id)
 
     async def get_member_by_id(self, group_id: int, user_id: int) -> Member:

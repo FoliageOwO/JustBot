@@ -9,4 +9,3 @@ class Group:
     member_count: int = None
     group_level: int = None
     group_create_time: int = None
-    group_memo: str = None

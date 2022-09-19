@@ -1,3 +1,4 @@
+import traceback
 from .utils import CQHttpUtils
 from ...apis import Element
 from ...utils import MessageChain
@@ -153,8 +154,11 @@ class Utils:
             for element in elements:
                 if element.__code__ == key:
                     return element(**kwargs)
-        except Exception:
-            return Plain(code)
+        except Exception as err:
+            if '[CQ:' not in code:
+                return Plain(code)
+            else:
+                traceback.print_exc()
 
     @staticmethod
     def format_unsupported_display(code: str) -> str:
@@ -392,6 +396,7 @@ class Image(Element):
         + file [str]: 图片文件
         + url [str]: 图片的 URL [可选]
         + type [Optional[ImageType]]: 图片类型 [可选]
+        + subType [Optional[int]]: 图片子类型 [可选] (只出现在群聊)
         + id [EffectType]: 秀图特效 ID [可选] (当 type 为 ImageType.SHOW 时有效)
         + c [int]: 通过网络下载图片时的线程数 [可选]
     > 示例
@@ -437,11 +442,13 @@ class Image(Element):
 
     def __init__(self, file: str, *,
                  url: str = None,
-                 type: ImageType = None, id: EffectType = None, c: int = None) -> None:
+                 type: ImageType = None, subType: int = None,
+                 id: EffectType = None, c: int = None) -> None:
         super().__init__()
         self.file = file
         self.url = url
         self.type = Image.ImageType(type).value if type != None else None
+        self.subType = subType
         self.id = Image.EffectType(id).value if id != None else Image.EffectType.PUTONG.value
         self.c = c
 
@@ -454,7 +461,7 @@ class Image(Element):
     @staticmethod
     def as_code_display(code: str) -> str:
         return Image(Utils.get(code, 'file'),
-                     url=Utils.get(code, 'url'), type=Image.ImageType(Utils.get(code, 'type', T_=int)),
+                     url=Utils.get(code, 'url'), subType=Utils.get(code, 'subType', T_=int), type=Image.ImageType(Utils.get(code, 'type', T_=int)),
                      id=Image.EffectType(Utils.get(code, 'id', T_=int)), c=Utils.get(code, 'c', T_=int)).as_display()
 
     def __str__(self) -> str:
