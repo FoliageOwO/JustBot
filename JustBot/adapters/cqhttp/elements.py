@@ -121,7 +121,7 @@ class Utils:
         for i in [element.__dict__[k] for k in element.__dict__ if k not in ignore]:
             if i is not None:
                 string = '%s|%s' % (string, i)
-        is_element = element is Element
+        is_element = element.__class__.__name__ != TypeVar.__name__
         return '[%s%s]' % (element.__type__ if is_element else '[red]ERROR[/red]', string if is_element else '')
 
     @staticmethod
