@@ -608,6 +608,9 @@ class Music(Element):
         >>> Music(MusicType.CUSTOM, url='https://example.com/music_detail', audio='https://example.com/music.mp3',
             title='Music', content='Music that beautiful', image='https://example.com/music.png')
     """
+    
+    __type__ = 'Music'
+    __code__ = 'music'
 
     class MusicType(Enum):
         """
@@ -628,6 +631,7 @@ class Music(Element):
     def __init__(self, type: MusicType, *,
                  id: int = None, url: str = None, audio: str = None, title: str = None,
                  content: str = None, image: str = None):
+        super().__init__()
         self.type = MusicType(type).value
         self.id = id
         self.url = url
