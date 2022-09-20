@@ -129,4 +129,4 @@ class CQHttpAdapter(Adapter):
             if d['retcode'] != 0:
                 self.logger.error('发送消息失败: 状态码错误. 返回结果: `%s`.' % d['wording'])
             else:
-                self.logger.info('%s -> %s(%s)' % (message.as_display(), t[3], t[1]))
+                self.logger.info('%s [red]->[/red] %s(%s)' % (message.as_display(), t[3], t[1]))

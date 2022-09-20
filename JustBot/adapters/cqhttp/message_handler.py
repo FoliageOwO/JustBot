@@ -70,9 +70,9 @@ class CQHttpMessageHandler:
         d.message_chain, d.message, d.colored_message = CQHttpMessageHandler.format_message_chain(d.message)
         d.colored_message = d.colored_message if d.colored_message else '[未知消息]'
         if d.message_type == 'private':
-            self.logger.info('%s(%s) -> %s' % (d.nickname, d.user_id, d.colored_message))
+            self.logger.info('%s(%s) [green]->[/green] %s' % (d.nickname, d.user_id, d.colored_message))
         elif d.message_type == 'group':
-            self.logger.info('%s(%s) -> %s(%s) -> %s' % ((await self.utils.get_group_by_id(d.group_id)).group_name, d.group_id, d.nickname, d.user_id, d.colored_message))
+            self.logger.info('%s(%s) [%s(%s)] [green]->[/green] %s' % ((await self.utils.get_group_by_id(d.group_id)).group_name, d.group_id, d.nickname, d.user_id, d.colored_message))
         await self.trigger()
 
     async def trigger(self) -> None:
