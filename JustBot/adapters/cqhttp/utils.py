@@ -5,7 +5,7 @@ from aiohttp import request
 from typing import Union
 
 
-class CQHttpUtils:
+class CQHTTPUtils:
     def __init__(self, adapter) -> None:
         self.host = adapter.http_host
         self.port = adapter.http_port

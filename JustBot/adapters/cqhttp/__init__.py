@@ -1,6 +1,6 @@
-from .config import CQHttpConfig
-from .adapter import CQHttpAdapter
-from .utils import CQHttpUtils
-from .message_handler import CQHttpMessageHandler
+from .config import CQHTTPConfig
+from .adapter import CQHTTPAdapter
+from .utils import CQHTTPUtils
+from .message_handler import CQHTTPMessageHandler
 from .elements import Plain, Face, At, Share, Reply, Image, _Forward, Poke, JSON
 from .elements import Utils as ElementUtil

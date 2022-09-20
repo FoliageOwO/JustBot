@@ -1,7 +1,7 @@
 from ...events import NoticeEvent
 
 
-class CQHttpEventHandler:
+class CQHTTPEventHandler:
     """
     > 说明
         CQHTTP 事件处理器.

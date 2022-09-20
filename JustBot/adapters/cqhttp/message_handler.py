@@ -18,7 +18,7 @@ class Data:
 d = Data()
 
 
-class CQHttpMessageHandler:
+class CQHTTPMessageHandler:
     """
     > 说明
         CQHTTP 消息处理器.
@@ -67,7 +67,7 @@ class CQHttpMessageHandler:
                 for kk in v.keys():
                     d.__setattr__(kk, v[kk])
 
-        d.message_chain, d.message, d.colored_message = CQHttpMessageHandler.format_message_chain(d.message)
+        d.message_chain, d.message, d.colored_message = CQHTTPMessageHandler.format_message_chain(d.message)
         d.colored_message = d.colored_message if d.colored_message else '[未知消息]'
         if d.message_type == 'private':
             self.logger.info('%s(%s) [green]->[/green] %s' % (d.nickname, d.user_id, d.colored_message))

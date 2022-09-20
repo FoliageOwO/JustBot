@@ -1,5 +1,5 @@
 import traceback
-from .utils import CQHttpUtils
+from .utils import CQHTTPUtils
 from ...apis import Element
 from ...utils import MessageChain
 from ... import CONFIG, BotApplication
@@ -382,10 +382,10 @@ class Reply(Element):
 
     @property
     def message_chain(self) -> MessageChain:
-        from .message_handler import CQHttpMessageHandler
+        from .message_handler import CQHTTPMessageHandler
 
-        data = BotApplication.coroutine(CQHttpUtils(CONFIG.adapter).get_message_by_id(self.message_id))
-        return CQHttpMessageHandler.format_message_chain(data['message'])[0]
+        data = BotApplication.coroutine(CQHTTPUtils(CONFIG.adapter).get_message_by_id(self.message_id))
+        return CQHTTPMessageHandler.format_message_chain(data['message'])[0]
 
 
 class Image(Element):
@@ -484,7 +484,7 @@ class _Forward(Element):
     def __init__(self, id: str) -> None:
         super().__init__()
         self.id = id
-        self.data = BotApplication.coroutine(CQHttpUtils(CONFIG.adapter).get_forward_message(id=id))
+        self.data = BotApplication.coroutine(CQHTTPUtils(CONFIG.adapter).get_forward_message(id=id))
 
     def as_display(self) -> str:
         return Utils.format_display(self, ['data'])

@@ -1,7 +1,7 @@
-from .config import CQHttpConfig
-from .utils import CQHttpUtils
-from .message_handler import CQHttpMessageHandler
-from .event_handler import CQHttpEventHandler
+from .config import CQHTTPConfig
+from .utils import CQHTTPUtils
+from .message_handler import CQHTTPMessageHandler
+from .event_handler import CQHTTPEventHandler
 from ...apis import Adapter
 from ...utils import Logger, MessageChain
 from ...contact import Friend, Group
@@ -21,14 +21,14 @@ nest_asyncio.apply()
 install()
 
 
-class CQHttpAdapter(Adapter):
+class CQHTTPAdapter(Adapter):
     """
     > 说明
         CQHTTP 适配器.
     > 参数
-        * config [CQHttpConfig]: 适配器对应的配置对象
+        * config [CQHTTPConfig]: 适配器对应的配置对象
     """
-    def __init__(self, config: CQHttpConfig) -> None:
+    def __init__(self, config: CQHTTPConfig) -> None:
         self.name = 'CQHTTP'
         self.ws_host = config.ws_host
         self.ws_port = config.ws_port
@@ -36,9 +36,9 @@ class CQHttpAdapter(Adapter):
         self.http_port = config.http_port
         self.ws_reverse = config.ws_reverse
         self.logger = Logger('Adapter/[bold magenta]%s[/bold magenta]' % self.name)
-        self.utils = CQHttpUtils(self)
-        self.message_handler = CQHttpMessageHandler(self)
-        self.event_handler = CQHttpEventHandler(self)
+        self.utils = CQHTTPUtils(self)
+        self.message_handler = CQHTTPMessageHandler(self)
+        self.event_handler = CQHTTPEventHandler(self)
         self.websocket = None
 
     @overrides

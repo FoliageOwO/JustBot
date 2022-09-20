@@ -4,7 +4,7 @@ from dataclasses import dataclass
 
 
 @dataclass
-class CQHttpConfig(AdapterConfig):
+class CQHTTPConfig(AdapterConfig):
     """
     > 说明
         CQHTTP 适配器配置类.
