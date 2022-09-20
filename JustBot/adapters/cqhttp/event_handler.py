@@ -20,4 +20,4 @@ class CQHttpEventHandler:
             event = e_list[0] if len(e_list) >= 1 else None
             if event:
                 instance = event(**data)
-                self.logger.info('[light yellow]<事件> %s[/light yellow]' % instance.as_display())
+                self.logger.info('[yellow]<事件> %s[/yellow]' % instance.as_display())
