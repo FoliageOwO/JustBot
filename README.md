@@ -2,13 +2,18 @@
 
 一个轻量的 qqbot 简易框架
 
-## 适配器 Adapter
+## 适配器
 
 - [x] <90%> `CQHttpAdapter`: 对 [`go-cqhttp`](https://github.com/Mrs4s/go-cqhttp) 的实现
 
 - [ ] <20%> `MiraiAdapter`: 对 [`mirai-api-http`](https://github.com/project-mirai/mirai-api-http) 的实现
 
 - [ ] <0%> `TelegramAdapter`: 对[`telegram-bot-api`](https://github.com/eternnoir/pyTelegramBotAPI) 的实现
+
+## 待办
+
+- [ ] 实现插件化
+- [ ] 完全实现 `go-cqhttp` 适配器
 
 ## 用法
 
