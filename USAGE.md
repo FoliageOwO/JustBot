@@ -3,11 +3,11 @@
 ## 初始化 `BotApplication`
 
 ```python
-from JustBot import BotApplication, CQHttpAdapter, CQHttpConfig,
+from JustBot import BotApplication, Adapter, CQHTTPConfig,
 
-config = CQHttpConfig(ws_host='127.0.0.1', ws_port=6700,
+config = CQHTTPConfig(ws_host='127.0.0.1', ws_port=6700,
                       http_host='127.0.0.1', http_port=5700, ws_reverse=False))
-adapter = CQHttpAdapter(config)
+adapter = CQHTTPAdapter(config)
 
 app = BotApplication(adapter)
 ```
