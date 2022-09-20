@@ -416,6 +416,7 @@ class Image(Element):
 
         FLASH = 'flash'
         SHOW = 'show'
+        NORMAL = ''
 
     class EffectType(Enum):
         """
@@ -442,14 +443,14 @@ class Image(Element):
 
     def __init__(self, file: str, *,
                  url: str = None,
-                 type: ImageType = None, subType: int = None,
+                 type: ImageType = ImageType.NORMAL, sub_type: int = 0,
                  id: EffectType = None, c: int = None) -> None:
         super().__init__()
-        self.file = file
+        self.file = file if file != None else url
         self.url = url
-        self.type = Image.ImageType(type).value if type != None else None
-        self.subType = subType
-        self.id = Image.EffectType(id).value if id != None else Image.EffectType.PUTONG.value
+        self.type = self.ImageType(type).value
+        self.subType = sub_type
+        self.id = self.EffectType(id).value if id != None else None # Image.EffectType.PUTONG.value
         self.c = c
 
     def as_display(self) -> str:
@@ -461,7 +462,7 @@ class Image(Element):
     @staticmethod
     def as_code_display(code: str) -> str:
         return Image(Utils.get(code, 'file'),
-                     url=Utils.get(code, 'url'), subType=Utils.get(code, 'subType', T_=int), type=Image.ImageType(Utils.get(code, 'type', T_=int)),
+                     url=Utils.get(code, 'url'), subType=Utils.get(code, 'subType', T_=int), type=Image.ImageType(Utils.get(code, 'type')),
                      id=Image.EffectType(Utils.get(code, 'id', T_=int)), c=Utils.get(code, 'c', T_=int)).as_display()
 
     def __str__(self) -> str:
