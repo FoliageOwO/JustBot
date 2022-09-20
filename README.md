@@ -12,8 +12,13 @@
 
 ## 待办
 
+- [ ] 更便捷的 API
+  * [ ] MessageEvent#reply
+- [ ] 加入权限系统, 允许设置对应权限执行
 - [ ] 实现插件化
 - [ ] 完全实现 `go-cqhttp` 适配器
+  * [ ] 完善 `NoticeEvent`
+  * [ ] 完善 `API`
 
 ## 用法
 
@@ -30,4 +35,4 @@
 - [GraiaProject/Application](https://github.com/GraiaProject/Application)
 - [Mrs4s/go-cqhttp](https://github.com/Mrs4s/go-cqhttp)
 - [mamoe/mirai](https://github.com/mamoe/mirai)
-  - [project-mirai/mirai-api-http](https://github.com/project-mirai/mirai-api-http)
+  * [project-mirai/mirai-api-http](https://github.com/project-mirai/mirai-api-http)
