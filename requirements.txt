@@ -1,4 +1,4 @@
 rich==10.1.0
 websockets==8.1
 nest-asyncio==1.5.1
-aiohttp
+aiohttp==3.7.3
