@@ -34,7 +34,7 @@ from JustBot.adapters.cqhttp import Plain, Face, Share
 MessageChain.create([
     Plain('Hello, World!', '还可以有第二行!'),
     Face(138),
-    Share('https://github.com/WindLeaf/JustBot', 'Give a Star')
+    Share('https://github.com/WindLeaf233/JustBot', 'Give a Star')
 ])
 ```
 
