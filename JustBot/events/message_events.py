@@ -12,6 +12,7 @@ class PrivateMessageEvent(Event):
     raw_message: str
     message_chain: MessageChain
     sender: Friend or Member
+    receiver: Friend or Member
 
 
 @dataclass
@@ -22,3 +23,4 @@ class GroupMessageEvent(Event):
     message_chain: MessageChain
     sender: Member
     group: Group
+    receiver: Group

@@ -50,8 +50,8 @@ class MiraiMessageHandler:
     async def trigger(self, message_type: str, message: str) -> None:
         lm: ListenerManager = CONFIG.listener_manager
         if message_type == 'FriendMessage':
-            event = PrivateMessageEvent(message, d.messageChain[0]['id'], message,
-                                        Friend(d.nickname, d.id))
+            friend = Friend(d.nickname, d.id)
+            event = PrivateMessageEvent(message, d.messageChain[0]['id'], message, friend, friend)
         elif message_type == 'GroupMessage':
             member = Member(Group(d.group['name'], d.group['id']), d.memberName, d.id)
             event = GroupMessageEvent(message, d.messageChain[0]['id'], message, member, member.group)

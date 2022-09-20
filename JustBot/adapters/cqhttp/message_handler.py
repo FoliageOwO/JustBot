@@ -78,11 +78,12 @@ class CQHttpMessageHandler:
     async def trigger(self) -> None:
         lm: ListenerManager = CONFIG.listener_manager
         if d.message_type == 'private':
-            event = PrivateMessageEvent(d.message, d.message_id, d.raw_message, d.message_chain,
-                                        Friend(d.user_id))
+            friend = Friend(d.user_id)
+            event = PrivateMessageEvent(d.message, d.message_id, d.raw_message, d.message_chain, friend, friend)
         else:
+            group = await self.utils.get_group_by_id(d.group_id)
             event = GroupMessageEvent(d.message, d.message_id, d.raw_message, d.message_chain,
                                       await self.utils.get_member_by_id(d.group_id, d.user_id),
-                                      await self.utils.get_group_by_id(d.group_id))
+                                      group, group)
         await lm.execute(PrivateMessageEvent if d.message_type == 'private' else GroupMessageEvent,
                          d.message, d.message_chain, event)
