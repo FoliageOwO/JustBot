@@ -18,6 +18,8 @@ class MessageChain:
     @staticmethod
     def create(*elements: Element) -> 'MessageChain':
         strings: List[str] = []
+        if len(elements) == 1 and type(elements[0]) == list:
+            elements = elements[0]
         for element in elements:
             strings.append(element.to_code())
         return MessageChain(strings, list(elements), False not in [element.sendable for element in elements])
