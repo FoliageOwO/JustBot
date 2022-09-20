@@ -1,6 +1,7 @@
 from .config import CQHttpConfig
 from .utils import CQHttpUtils
 from .message_handler import CQHttpMessageHandler
+from .event_handler import CQHttpEventHandler
 from ...apis import Adapter
 from ...utils import Logger, MessageChain
 from ...contact import Friend, Group
@@ -37,6 +38,7 @@ class CQHttpAdapter(Adapter):
         self.logger = Logger('Adapter/[bold magenta]%s[/bold magenta]' % self.name)
         self.utils = CQHttpUtils(self)
         self.message_handler = CQHttpMessageHandler(self)
+        self.event_handler = CQHttpEventHandler(self)
         self.websocket = None
 
     @overrides
@@ -108,8 +110,7 @@ class CQHttpAdapter(Adapter):
         if _type == 'message':
             await self.message_handler.handle(data)
         else:
-            # TODO: 增加返回事件
-            pass
+            await self.event_handler.handle(data)
 
     @overrides
     async def send_message(self, target: Union[Friend, Group], message: MessageChain) -> Any:
