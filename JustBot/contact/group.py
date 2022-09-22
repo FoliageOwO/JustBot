@@ -1,8 +1,10 @@
+from ..apis import Contact
+
 from dataclasses import dataclass
 
 
 @dataclass
-class Group:
+class Group(Contact):
     group_id: int
     group_name: str = None
     max_member: int = None

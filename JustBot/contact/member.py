@@ -1,10 +1,11 @@
+from ..apis import Contact
 from ..contact import Group
 
 from dataclasses import dataclass
 
 
 @dataclass
-class Member:
+class Member(Contact):
     group: Group
     user_id: int
     group_id: int

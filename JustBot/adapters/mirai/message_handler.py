@@ -57,6 +57,6 @@ class MiraiMessageHandler:
             event = GroupMessageEvent(message, d.messageChain[0]['id'], message, member, member.group)
         else:
             event = None
-        await lm.execute(PrivateMessageEvent if message_type == 'FriendMessage'
+        await lm.handle_message(PrivateMessageEvent if message_type == 'FriendMessage'
                          else (GroupMessageEvent if message_type == 'GroupMessage' else None), message, event)
 

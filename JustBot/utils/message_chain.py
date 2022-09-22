@@ -1,7 +1,7 @@
 from .logger import Logger
 from ..apis import Element
 
-from typing import List, Tuple, Any, Union, Type
+from typing import List, Any, Union, Type
 
 
 class MessageChain:

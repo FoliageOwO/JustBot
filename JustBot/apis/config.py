@@ -10,7 +10,6 @@ class Config:
     > 说明
         配置基类
     """
-
     adapter: Adapter
     nick_name: AnyStr
     listener_manager: "ListenerManager"

@@ -1,6 +1,6 @@
 from .logger import Logger
 from .listener import Listener
-from ..apis import Event
+from ..apis import MessageEvent, NoticeEvent
 from ..matchers import KeywordMatcher, CommandMatcher
 from ..utils import MessageChain, PriorityQueue
 
@@ -33,7 +33,7 @@ class ListenerManager:
 
         self.pq.join(dict(listener=listener, matcher=matcher, convert=parameters_convert), priority)
 
-    async def execute(self, event_type: Type[Event], message: str, message_chain: MessageChain, event: Event) -> None:
+    async def handle_message(self, event_type: Type[MessageEvent], message: str, message_chain: MessageChain, event: MessageEvent) -> None:
         for data in self.pq:
             listener: Listener = data['listener']
             matcher: Union[KeywordMatcher, CommandMatcher] = data['matcher']
@@ -48,6 +48,15 @@ class ListenerManager:
                 await execute_function() \
                     if not matcher else \
                     (await execute_function() if matcher.match(message_chain) else None)
+        self.pq.rejoin()
+    
+    async def handle_event(self, event_type: Type[NoticeEvent], code:str, event: NoticeEvent) -> None:
+        for data in self.pq:
+            listener: Listener = data['listener']
+            
+            if listener.event == event_type:
+                execute_funtion = lambda: listener.target(event=event, code=code)
+                await execute_funtion()
         self.pq.rejoin()
 
     # TODO: 优化 parameters 获取

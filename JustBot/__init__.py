@@ -7,7 +7,6 @@ from typing import Type, Union, Coroutine, Any, List, Awaitable, Tuple, Callable
 from rich.traceback import install
 
 import asyncio
-import traceback
 
 install()
 VERSION = '2.0.2'
@@ -85,11 +84,11 @@ class BotApplication:
         > 说明
             添加消息监听器
         > 参数
-            + event [type[Event] | list[type[Event]] | tuple[type[Event]]]: 消息事件类型
+            + event [type[Event] | list[type[Event]] | tuple[type[Event]]]: 事件类型
             + priority [int]: 优先级 (越小越优先, 不能小于 0) [default=5]
-            + parameters_convert [type[str] | type[list] | type[dict] | None]: 参数转换类型 [default=str]
+            + parameters_convert [type[str] | type[list] | type[dict] | None]: 消息事件中命令参数转换类型 [default=str]
         > 返回
-            * wrapper [Callable]: 消息监听器装饰器
+            * wrapper [Callable]: 监听器装饰器
         """
 
         if priority > 0:

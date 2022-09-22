@@ -1,26 +1,13 @@
-from ..apis import Event
-from ..contact import Friend, Group, Member
-from ..utils import MessageChain
-
-from dataclasses import dataclass
+from ..apis import MessageEvent
+from ..contact import Group
 
 
-@dataclass
-class PrivateMessageEvent(Event):
-    message: str
-    message_id: int
-    raw_message: str
-    message_chain: MessageChain
-    sender: Friend or Member
-    receiver: Friend or Member
+class PrivateMessageEvent(MessageEvent):
+    def __init__(self, **kwargs) -> None:
+        super().__init__(**kwargs)
 
 
-@dataclass
-class GroupMessageEvent(Event):
-    message: str
-    message_id: int
-    raw_message: str
-    message_chain: MessageChain
-    sender: Member
-    group: Group
-    receiver: Group
+class GroupMessageEvent(MessageEvent):
+    def __init__(self, group: Group, **kwargs) -> None:
+        super().__init__(**kwargs)
+        self.group = group

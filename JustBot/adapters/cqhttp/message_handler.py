@@ -25,7 +25,7 @@ class CQHTTPMessageHandler:
     > 参数
         + adapter [Adapter]: 适配器对象
     """
-    def __init__(self, adapter: "Adapter") -> None:
+    def __init__(self, adapter: 'Adapter') -> None:
         self.listener_manager = CONFIG.listener_manager
         self.logger = adapter.logger
         self.utils = adapter.utils
@@ -79,11 +79,11 @@ class CQHTTPMessageHandler:
         lm: ListenerManager = CONFIG.listener_manager
         if d.message_type == 'private':
             friend = Friend(d.user_id)
-            event = PrivateMessageEvent(d.message, d.message_id, d.raw_message, d.message_chain, friend, friend)
+            event = PrivateMessageEvent(message=d.message, message_id=d.message_id, raw_message=d.raw_message, message_chain=d.message_chain, sender=friend, receiver=friend)
         else:
             group = await self.utils.get_group_by_id(d.group_id)
-            event = GroupMessageEvent(d.message, d.message_id, d.raw_message, d.message_chain,
-                                      await self.utils.get_member_by_id(d.group_id, d.user_id),
-                                      group, group)
-        await lm.execute(PrivateMessageEvent if d.message_type == 'private' else GroupMessageEvent,
+            event = GroupMessageEvent(group=group,
+                                      message=d.message, message_id=d.message_id, raw_message=d.raw_message, message_chain=d.message_chain,
+                                      sender=await self.utils.get_member_by_id(d.group_id, d.user_id), receiver=group)
+        await lm.handle_message(PrivateMessageEvent if d.message_type == 'private' else GroupMessageEvent,
                          d.message, d.message_chain, event)
