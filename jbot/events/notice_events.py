@@ -1,7 +1,10 @@
 from ..apis import NoticeEvent
+from .. import CONFIG, BotApplication
 
 from dataclasses import dataclass
 from enum import Enum
+
+coroutine = BotApplication.coroutine
 
 
 class GroupUpload(NoticeEvent):
@@ -39,12 +42,13 @@ class GroupUpload(NoticeEvent):
         self.group_id = group_id
         self.user_id = user_id
         self.file = self.FileData(**dict(file))
+        self.group = coroutine(CONFIG.adapter_utils.get_group_by_id(group_id))
+        self.member = coroutine(CONFIG.adapter_utils.get_member_by_id(group_id, user_id))
     
     def as_display(self) -> str:
         return '群成员 %s 在群 %s 上传了文件 [yellow]%s[/yellow]' % (self.user_id, self.group_id, self.file.name)
 
 
-@dataclass
 class GroupAdmin(NoticeEvent):
     """
     > 说明
@@ -74,13 +78,14 @@ class GroupAdmin(NoticeEvent):
         self.sub_type = self.Type(sub_type)
         self.group_id = group_id
         self.user_id = user_id
+        self.group = coroutine(CONFIG.adapter_utils.get_group_by_id(group_id))
+        self.member = coroutine(CONFIG.adapter_utils.get_member_by_id(group_id, user_id))
     
     def as_display(self) -> str:
         value = '[green]被设置管理[/green]' if self.sub_type == self.Type.SET else '[red]被取消管理[/red]'
         return '群成员 %s 在群 %s %s' % (self.user_id, self.group_id, value)
 
 
-@dataclass
 class GroupDecrease(NoticeEvent):
     """
     > 说明
@@ -114,6 +119,8 @@ class GroupDecrease(NoticeEvent):
         self.group_id = group_id
         self.operator_id = operator_id
         self.user_id = user_id
+        self.group = coroutine(CONFIG.adapter_utils.get_group_by_id(group_id))
+        self.operator = coroutine(CONFIG.adapter_utils.get_member_by_id(group_id, operator_id))
     
     def as_display(self) -> str:
         value_mapping = {
@@ -129,7 +136,6 @@ class GroupDecrease(NoticeEvent):
         return '%s 被 %s 移出群 %s' % (value_mapping[self.sub_type], operator_mapping[self.sub_type], self.group_id)
 
 
-@dataclass
 class GroupIncrease(NoticeEvent):
     """
     > 说明
@@ -161,12 +167,14 @@ class GroupIncrease(NoticeEvent):
         self.group_id = group_id
         self.operator_id = operator_id
         self.user_id = user_id
+        self.group = coroutine(CONFIG.adapter_utils.get_group_by_id(group_id))
+        self.operator = coroutine(CONFIG.adapter_utils.get_member_by_id(group_id, operator_id))
+        self.member = coroutine(CONFIG.adapter_utils.get_member_by_id(group_id, user_id))
 
     def as_display(self) -> str:
         return '%s 进入了群 %s' % (self.user_id, self.group_id)
 
 
-@dataclass
 class GroupBan(NoticeEvent):
     """
     > 说明
@@ -200,6 +208,9 @@ class GroupBan(NoticeEvent):
         self.operator_id = operator_id
         self.user_id = user_id
         self.duration = duration
+        self.group = coroutine(CONFIG.adapter_utils.get_group_by_id(group_id))
+        self.operator = coroutine(CONFIG.adapter_utils.get_member_by_id(group_id, operator_id))
+        self.member = coroutine(CONFIG.adapter_utils.get_member_by_id(group_id, user_id))
     
     def as_display(self) -> str:
         value_mapping = {
@@ -209,7 +220,6 @@ class GroupBan(NoticeEvent):
         return '群成员 %s 在群 %s %s' % (self.user_id, self.group_id, value_mapping[self.sub_type])
 
 
-@dataclass
 class FriendAdd(NoticeEvent):
     """
     > 说明
@@ -227,3 +237,57 @@ class FriendAdd(NoticeEvent):
     
     def as_display(self) -> str:
         return '%s 请求添加你为好友' % (self.user_id)
+
+
+class GroupRecall(NoticeEvent):
+    """
+    > 说明
+        群消息撤回事件.
+    > 参数
+        + group_id [int]: 群号
+        + user_id [int]: 消息发送者 QQ 号
+        + operator_id [int]: 操作者 QQ 号
+        + message_id [int]: 消息 ID
+    """
+    
+    __type__ = '群消息撤回'
+    __code__ = 'group_recall'
+    
+    def __init__(self, group_id: int, user_id: int, operator_id: int, message_id: int, **kwargs) -> None:
+        super().__init__(**kwargs)
+        self.group_id = group_id
+        self.user_id = user_id
+        self.operator_id = operator_id
+        self.message_id = message_id
+        self.group = coroutine(CONFIG.adapter_utils.get_group_by_id(group_id))
+        self.operator = coroutine(CONFIG.adapter_utils.get_member_by_id(group_id, operator_id))
+        self.member = coroutine(CONFIG.adapter_utils.get_member_by_id(group_id, user_id))
+        self.message_data = coroutine(CONFIG.adapter_utils.get_message_by_id(message_id))
+        self.message_chain, self.message, self.colored_message = CONFIG.message_handler.format_message_chain(self.message_data['message'])
+
+    def as_display(self) -> str:
+        return '%s 在群 %s 撤回了 %s 的一条消息 [%s]' % (self.operator_id, self.group_id, self.user_id, self.message_id)
+
+
+class FriendRecall(NoticeEvent):
+    """
+    > 说明
+        好友撤回事件.
+    > 参数
+        + user_id [int]: 好友 QQ 号
+        + message_id [int]: 被撤回的消息 ID
+    """
+    
+    __type__ = '好友撤回'
+    __code__ = 'friend_recall'
+    
+    def __init__(self, user_id: int, message_id: int, **kwargs) -> None:
+        super().__init__(**kwargs)
+        self.user_id = user_id
+        self.message_id = message_id
+        self.friend = coroutine(CONFIG.get_friend_by_id(user_id))
+        self.message_data = coroutine(CONFIG.adapter_utils.get_message_by_id(message_id))
+        self.message_chain, self.message, self.colored_message = CONFIG.message_handler.format_message_chain(self.message_data['message'])
+
+    def as_display(self) -> str:
+        return '好友 %s 撤回了一条消息 [%s]' % (self.user_id, self.message_id)

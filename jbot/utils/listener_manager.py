@@ -3,9 +3,8 @@ from .listener import Listener
 from ..apis import MessageEvent, NoticeEvent, Matcher
 from ..matchers import CommandMatcher
 from ..utils import MessageChain, PriorityQueue
-from ..events import GroupMessageEvent
 
-from typing import Awaitable, Type, Union, Any, List, Tuple
+from typing import Awaitable, Type, Union, Any
 
 
 class ListenerManager:
@@ -57,7 +56,7 @@ class ListenerManager:
             trigger = lambda: self.trigger(listener, event, message_chain, message, is_command_matcher, convert, matcher)
             if listener.event == event_type:
                 role_list = [i.value for i in role['role']]
-                if role_list != [] and type(event) is GroupMessageEvent:
+                if role_list != [] and event.__class__.__name__ == 'GroupMessageEvent':
                     if event.sender.role in role_list:
                         await trigger()
                     else:
