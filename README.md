@@ -4,7 +4,7 @@
 
 ## 适配器
 
-- [x] <90%> `CQHttpAdapter`: 对 [`go-cqhttp`](https://github.com/Mrs4s/go-cqhttp) 的实现
+- [x] <90%> `CQHTTPAdapter`: 对 [`go-cqhttp`](https://github.com/Mrs4s/go-cqhttp) 的实现
 
 - [ ] <20%> `MiraiAdapter`: 对 [`mirai-api-http`](https://github.com/project-mirai/mirai-api-http) 的实现
 
