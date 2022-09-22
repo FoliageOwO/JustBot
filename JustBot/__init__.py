@@ -96,19 +96,21 @@ class BotApplication:
 
             def wrapper(target: Callable and Awaitable):
                 if asyncio.iscoroutinefunction(target):
-                    if event.__class__ not in [list, tuple]:
-                        self.logger.info(
-                            '注册监听器: [blue]%s[red][%s][/red][/blue] => [light_green]Function <%s>[/light_green].' % (
-                                event.__name__, priority, target.__name__))
-                        self.listener_manager.join(listener=Listener(event, target), priority=priority, matcher=matcher,
-                                                   parameters_convert=parameters_convert)
+                    ev = event
+                    if ev.__class__ == list and len(list(ev)) == 1:
+                        ev = ev[0]
+                    
+                    join = lambda e: self.listener_manager.join(listener=Listener(e, target), priority=priority, matcher=matcher, parameters_convert=parameters_convert)
+                    register = lambda multi, name: self.logger.info('注册监听器%s: [blue]%s[red][%s][/red][/blue] => [light_green]Function <%s>[/light_green].' % (
+                        ' (多个事件)' if multi else '', name, priority, target.__name__))
+
+                    if ev.__class__ not in [list, tuple]:
+                        register(True, ev.__name__)
+                        join(ev)
                     else:
-                        self.logger.info(
-                            '注册监听器 (多个事件): [blue]%s[red][%s][/red][/blue] => [light_green]Function <%s>[/light_green].' % (
-                                ' & '.join([e.__name__ for e in event]), priority, target.__name__))
-                        for e in event:
-                            self.listener_manager.join(listener=Listener(e, target), priority=priority, matcher=matcher,
-                                                       parameters_convert=parameters_convert)
+                        register(False, ' & '.join([e.__name__ for e in ev]))
+                        for e in ev:
+                            join(e)
                 else:
                     self.logger.warning('无法注册监听器: 已忽略函数 [light_green]%s[/light_green], 因为它必须是异步函数!' % target)
 
