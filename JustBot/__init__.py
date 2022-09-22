@@ -1,6 +1,5 @@
 from .utils import Logger, MessageChain, Listener, ListenerManager
-from .apis import Adapter, Config, Event, Element
-from .contact import Friend, Group
+from .apis import Adapter, Config, Event, Element, Contact
 from .matchers import KeywordMatcher, CommandMatcher
 
 from typing import Type, Union, Coroutine, Any, List, Awaitable, Tuple, Callable
@@ -44,30 +43,47 @@ class BotApplication:
     def start_running(self) -> None:
         self.coroutine(self.adapter.start_listen())
 
-    async def send_msg(self, target: Union[Friend, Group], message: Union[MessageChain, str]) -> None:
+    async def send_msg(self, target: Contact,
+                       message: Union[MessageChain, Union[Element, List[Element], Tuple[Element]], str]) -> None:
         """
         > 说明
             向联系人发送消息
         > 参数
-            + target [Friend | Group]: 联系人实例
-            + message [MessageChain | str]: 消息链或纯文本 (纯文本会自动转为 ``Plain``)
+            + target [Contact]: 联系人实例
+            + message [MessageChain | Element | str]: 消息链或元素或纯文本 (纯文本会自动转为 ``Plain``, 元素会自动转化为 ``MessageChain``)
         > 示例
-            >>> await app.send_msg(Friend(123456789), MessageChain.create(Reply(123456789), Plain('Example Message')))
-            >>> await app.send_msg(Friend(123456789), 'Example Message')
+            >>> friend = Friend(123456789)
+            >>> await app.send_msg(friend, MessageChain.create(Reply(123456789), Plain('Example Message')))
+            >>> await app.send_msg(friend, Plain('Single Element'))
+            >>> await app.send_msg(friend, [Plain('A List or Tuple Too'), Face(12)])
+            >>> await app.send_msg(friend, 'Example Message')
         """
 
         try:
-            if type(message) is MessageChain:
-                await self.adapter.send_message(target, message)
-            elif type(message) is str:
+            t = type(message)
+            send = lambda chain: self.adapter.send_message(target, chain)
+            elements = Element.__subclasses__()
+            error = lambda: self.adapter.logger.warning('无法发送消息: 参数 [light_green]`message`[/light_green] 类型错误!')
+            is_element = t in elements or t is Element
+            is_list = t in [list, tuple]
+
+            if t is MessageChain:
+                await send(message)
+            elif t is str:
                 plain: Element = \
-                    [i for i in Element.__subclasses__()
+                    [i for i in elements
                      if self.adapter.name.lower() in str(i) and i.__name__ == 'Plain'
                      ][0](message)
-                await self.adapter.send_message(target, MessageChain.create(plain))
+                await send(MessageChain.create(plain))
+            elif is_element or is_list:
+                if is_element:
+                    await send(MessageChain.create(message))
+                elif is_list:
+                    await send(MessageChain.create(*message))
+                else:
+                    error()
             else:
-                self.adapter.logger.warning(
-                    '无法发送消息: 参数 [light_green]message[/light_green] 必须是 [light_green]消息链[/light_green] 或 [light_green]纯文本[/light_green] 类型!')
+                error()
         except Exception as e:
             self.adapter.logger.error('无法发送消息: `%s`' % str(e))
             raise
