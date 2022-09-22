@@ -1,5 +1,4 @@
 import traceback
-from .utils import CQHTTPUtils
 from ...apis import Element
 from ...utils import MessageChain
 from ... import CONFIG, BotApplication
@@ -7,6 +6,14 @@ from ... import CONFIG, BotApplication
 from enum import Enum
 from typing import Any, List, TypeVar, NewType
 from json import dumps, loads as json
+
+
+class CQHTTPElement(Element):
+    """
+    > 说明
+        CQHTTP 消息链元素
+    """
+    pass
 
 
 class Utils:
@@ -80,12 +87,12 @@ class Utils:
         return T_(mapping[key]) if key in mapping.keys() else default
 
     @staticmethod
-    def format_code(element: Element) -> str:
+    def format_code(element: CQHTTPElement) -> str:
         """
         > 说明
-            将 ``Element 对象`` 转换成 CQ 码.
+            将 ``CQHTTPElement 对象`` 转换成 CQ 码.
         > 参数
-            + element [Element]: 元素对象
+            + element [CQHTTPElement]: 元素对象
         > 返回
             * str: 完整的 CQ 码
         > 示例
@@ -101,12 +108,12 @@ class Utils:
         return '[CQ:%s%s]' % (element.__code__, string)
 
     @staticmethod
-    def format_display(element: Element, ignore: List[str] = ()) -> str:
+    def format_display(element: CQHTTPElement, ignore: List[str] = ()) -> str:
         """
         > 说明
-            将 ``Element 对象`` 转换成易读字符串.
+            将 ``CQHTTPElement 对象`` 转换成易读字符串.
         > 参数
-            + element [Element]: 元素对象
+            + element [CQHTTPElement]: 元素对象
             + ignore [list[str]]: 忽略转换时的某些参数 [可选]
         > 返回
             * str: 易读字符串
@@ -125,16 +132,16 @@ class Utils:
         return '[%s%s]' % (element.__type__ if is_element else '[red]ERROR[/red]', string if is_element else '')
 
     @staticmethod
-    def get_element_by_code(code: str) -> Element:
+    def get_element_by_code(code: str) -> CQHTTPElement:
         """
         > 说明
-            将完整的 CQ 码 ``code`` 转换成 ``Element 对象``,
+            将完整的 CQ 码 ``code`` 转换成 ``CQHTTPElement 对象``,
             如果该 ``code`` 暂未支持将会返回 ``Plain(code)``.
         > 参数
             + code [str]: 完整的 CQ 码
         > 返回
-            * Element[?]: 转换后的 ``Element`` 对象
-            * Element[Plain]: 未支持 CQ 码时的 ``Plain`` 对象
+            * CQHTTPElement[?]: 转换后的 ``CQHTTPElement`` 对象
+            * CQHTTPElement[Plain]: 未支持 CQ 码时的 ``Plain`` 对象
         > 示例
             >>> foo = Utils.get_element_by_code('[CQ:foo,bar=1]')
             >>> foo
@@ -149,7 +156,7 @@ class Utils:
         """
 
         kwargs = Utils.to_mapping(Utils.remove_brackets(code))
-        elements = [i for i in Element.__subclasses__() if 'cqhttp' in str(i)]
+        elements = [i for i in CQHTTPElement.__subclasses__() if 'cqhttp' in str(i)]
         try:
             key = Utils.remove_brackets(code).split(',')[0].split(':')[1]
             for element in elements:
@@ -176,16 +183,16 @@ class Utils:
         """
 
         name = Utils.remove_brackets(code).split(',')[0].split(':')[1]
-        element = TypeVar(name, bound=Element)
+        element = TypeVar(name, bound=CQHTTPElement)
         return Utils.format_display(element)
 
     @staticmethod
-    def as_colored_display(element: Element) -> str:
+    def as_colored_display(element: CQHTTPElement) -> str:
         """
         > 说明
-            将 ``Element 对象`` 转化为带有颜色的易读字符串.
+            将 ``CQHTTPElement 对象`` 转化为带有颜色的易读字符串.
         > 参数
-            + element [Element]: Element 对象
+            + element [CQHTTPElement]: CQHTTPElement 对象
         > 返回
             * str: 带有颜色的易读字符串
         > 示例
@@ -198,23 +205,23 @@ class Utils:
         return ('[%s]%s[/%s]' % (color, element.as_display(), color)).replace('|', '[%s]|[/%s]' % (split_color, split_color))
 
     @staticmethod
-    def as_str(element: Element) -> str:
+    def as_str(element: CQHTTPElement) -> str:
         """
         > 说明
-            将 ``Element 对象`` 转换为 ``<Element:{name}|{display}>`` 的格式.
+            将 ``CQHTTPElement 对象`` 转换为 ``<CQHTTPElement:{name}|{display}>`` 的格式.
         > 参数
-            + element [Element]: 元素对象
+            + element [CQHTTPElement]: 元素对象
         > 返回
             * str: 转换后的字符串
         > 示例
             >>> Utils.as_str(Foo(bar=1))
-            '<Element:Foo|[Foo:1]>'
+            '<CQHTTPElement:Foo|[Foo:1]>'
         """
 
-        return '<Element:%s|%s>' % (element.__class__.__name__, element.as_display())
+        return '<CQHTTPElement:%s|%s>' % (element.__class__.__name__, element.as_display())
 
 
-class Plain(Element):
+class Plain(CQHTTPElement):
     """
     > 说明
         纯文本, 支持多行.
@@ -246,7 +253,7 @@ class Plain(Element):
         return Utils.as_str(self)
 
 
-class Face(Element):
+class Face(CQHTTPElement):
     """
     > 说明
         表情.
@@ -277,7 +284,7 @@ class Face(Element):
         return Utils.as_str(self)
 
 
-class At(Element):
+class At(CQHTTPElement):
     """
     > 说明
         @ 某人.
@@ -309,7 +316,7 @@ class At(Element):
         return Utils.as_str(self)
 
 
-class Share(Element):
+class Share(CQHTTPElement):
     """
     > 说明
         链接分享.
@@ -349,7 +356,7 @@ class Share(Element):
         return Utils.as_str(self)
 
 
-class Reply(Element):
+class Reply(CQHTTPElement):
     """
     > 说明
         回复一个消息.
@@ -384,11 +391,11 @@ class Reply(Element):
     def message_chain(self) -> MessageChain:
         from .message_handler import CQHTTPMessageHandler
 
-        data = BotApplication.coroutine(CQHTTPUtils(CONFIG.adapter).get_message_by_id(self.message_id))
+        data = BotApplication.coroutine(CONFIG.adapter.utils.get_message_by_id(self.message_id))
         return CQHTTPMessageHandler.format_message_chain(data['message'])[0]
 
 
-class Image(Element):
+class Image(CQHTTPElement):
     """
     > 说明
         图片.
@@ -448,9 +455,9 @@ class Image(Element):
         super().__init__()
         self.file = file if file != None else url
         self.url = url
-        self.type = self.ImageType(type).value
+        self.type = Image.ImageType(type).value
         self.subType = sub_type
-        self.id = self.EffectType(id).value if id != None else None # Image.EffectType.PUTONG.value
+        self.id = Image.EffectType(id).value if id != None else None # Image.EffectType.PUTONG.value
         self.c = c
 
     def as_display(self) -> str:
@@ -469,7 +476,7 @@ class Image(Element):
         return Utils.as_str(self)
 
 
-class _Forward(Element):
+class _Forward(CQHTTPElement):
     """
     > 说明
         合并转发. [仅接收] [接收非 CQ 码]
@@ -485,7 +492,7 @@ class _Forward(Element):
     def __init__(self, id: str) -> None:
         super().__init__()
         self.id = id
-        self.data = BotApplication.coroutine(CQHTTPUtils(CONFIG.adapter).get_forward_message(id=id))
+        self.data = BotApplication.coroutine(CONFIG.adapter.utils.get_forward_message(id=id))
 
     def as_display(self) -> str:
         return Utils.format_display(self, ['data'])
@@ -508,7 +515,7 @@ class _Forward(Element):
         return chain
 
 
-class Poke(Element):
+class Poke(CQHTTPElement):
     """
     > 说明
         戳一戳. [仅群聊]
@@ -539,7 +546,7 @@ class Poke(Element):
         return Utils.as_str(self)
 
 
-class JSON(Element):
+class JSON(CQHTTPElement):
     """
     > 说明
         JSON 消息.
@@ -591,7 +598,7 @@ class JSON(Element):
         return Utils.as_str(self)
 
 
-class Music(Element):
+class Music(CQHTTPElement):
     """
     > 说明
         音乐分享. [仅发送]
@@ -633,16 +640,16 @@ class Music(Element):
                  id: int = None, url: str = None, audio: str = None, title: str = None,
                  content: str = None, image: str = None):
         super().__init__()
-        self.type = MusicType(type).value
+        self.type = Music.MusicType(type).value
         self.id = id
         self.url = url
         self.audio = audio
         self.title = title
         self.content = content
         self.image = image
-        if self.type != MusicType.CUSTOM and id is None:
+        if self.type != Music.MusicType.CUSTOM and id is None:
             raise ValueError('非自定义音乐需要传入 `id` 参数!')
-        if self.type == MusicType.CUSTOM and not (self.url and self.audio and self.title):
+        if self.type == Music.MusicType.CUSTOM and not (self.url and self.audio and self.title):
             raise ValueError('自定义音乐需要传入 `url`, `audio`, `title` 参数!')
 
     def as_display(self) -> str:

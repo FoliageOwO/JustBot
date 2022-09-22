@@ -1,3 +1,4 @@
+from .elements import CQHTTPElement, Plain
 from ...contact import Friend, Group, Member
 from ... import HTTP_PROTOCOL
 
@@ -45,3 +46,9 @@ class CQHTTPUtils:
 
     async def get_message_by_id(self, id: int) -> Union[dict, None]:
         return await self.request_api(f'/get_msg', data=True, params={'message_id': id})
+
+    def get_element(self, code: str) -> CQHTTPElement:
+        for element_class in CQHTTPElement.__subclasses__():
+            if element_class.__code__ == code:
+                return element_class
+        return Plain

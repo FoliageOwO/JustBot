@@ -1,6 +1,15 @@
 from ...apis import Element
 
 
+class MiraiElement(Element):
+    """
+    > 说明
+        Mirai 消息链元素
+    """
+    pass
+
+
+
 # TODO: 完善
 class Utils:
     @staticmethod
@@ -16,7 +25,7 @@ class Utils:
         return dict(type=el_name, **kwargs)
 
     @staticmethod
-    def get_element_by_code(code: dict) -> Element:
+    def get_element_by_code(code: dict) -> MiraiElement:
         _code = code.copy()
         _type = _code.pop('type')
         mapping = {
@@ -33,7 +42,7 @@ class Utils:
         return Utils.format_display(result, *tuple(_code.values())) if _type != 'Source' else ''
 
 
-class Plain(Element):
+class Plain(MiraiElement):
     def __init__(self, text: str or list) -> None:
         self.text = '\n'.join(text) if type(text) is list else text
 
@@ -51,7 +60,7 @@ class Plain(Element):
         return Utils.as_str(self)
 
 
-class Face(Element):
+class Face(MiraiElement):
     def __init__(self, face_id: int) -> None:
         self.id = face_id
 
@@ -69,13 +78,13 @@ class Face(Element):
         return Utils.as_str(self)
 
 
-class At(Element):
+class At(MiraiElement):
     pass
 
 
-class Share(Element):
+class Share(MiraiElement):
     pass
 
 
-class Reply(Element):
+class Reply(MiraiElement):
     pass

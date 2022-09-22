@@ -11,7 +11,7 @@ install()
 VERSION = '2.0.2'
 HTTP_PROTOCOL = 'http://'
 WS_PROTOCOL = 'ws://'
-CONFIG = Config(*[None] * 5)
+CONFIG = Config(*[None] * 6)
 
 
 class BotApplication:
@@ -39,6 +39,7 @@ class BotApplication:
     def set_config(self) -> None:
         for k in self.__dict__.keys():
             CONFIG.__setattr__(k, self.__dict__[k])
+        CONFIG.__setattr__('application', self)
 
     def start_running(self) -> None:
         self.coroutine(self.adapter.start_listen())
@@ -102,7 +103,7 @@ class BotApplication:
         > 参数
             + event [type[Event] | list[type[Event]] | tuple[type[Event]]]: 事件类型
             + priority [int]: 优先级 (越小越优先, 不能小于 0) [default=5]
-            + parameters_convert [type[str] | type[list] | type[dict] | None]: 消息事件中命令参数转换类型 [default=str]
+            + parameters_convert [type[str] | type[list] | type[dict] | None]: 消息事件中命令参数转换类型 [default=list]
         > 返回
             * wrapper [Callable]: 监听器装饰器
         """

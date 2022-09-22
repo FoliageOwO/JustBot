@@ -1,6 +1,7 @@
-from ..apis import Contact
+from ..apis import Contact, Element
 
 from abc import ABCMeta, abstractmethod
+from typing import Union, List, Tuple
 
 
 class Event:
@@ -28,6 +29,7 @@ class MessageEvent(Event, metaclass=ABCMeta):
     @abstractmethod
     def __init__(self, message: str, message_id: int, raw_message: str,
                  message_chain: 'MessageChain', sender: Contact, receiver: Contact,
+                 app: 'BotApplication',
                  *args, **kwargs) -> None:
         self.message = message
         self.message_id = message_id
@@ -35,7 +37,29 @@ class MessageEvent(Event, metaclass=ABCMeta):
         self.message_chain = message_chain
         self.sender = sender
         self.receiver = receiver
-
+        self._app = app
+    
+    """
+    > 说明
+        快速对该消息对象进行回复.
+    > 参数
+        + message [MessageChain | Element | str]: 消息链或元素或纯文本 (纯文本会自动转为 ``Plain``, 元素会自动转化为 ``MessageChain``)
+        + with_reply [bool]: 是否带上回复 ``Reply`` 当前消息链 [default=True]
+    """
+    async def reply(self,
+                    message: Union['MessageChain', Union[Element, List[Element], Tuple[Element]], str],
+                    with_reply: bool = True) -> None:
+        reply = self._app.adapter_utils.get_element('reply')(self.message_id)
+        plain = self._app.adapter_utils.get_element('plain')
+        mapping = {
+            'MessageChain': lambda: message.append_elements(reply) if with_reply else message,
+            'Element': lambda: [reply, message] if with_reply else [message],
+            'list': lambda: [reply] + message if with_reply else message,
+            'tuple': lambda: ((reply,) + message) if with_reply else message,
+            'str': lambda: [reply, plain(message)] if with_reply else [plain(message)]
+        }
+        t = message.__class__.__name__
+        await self._app.send_msg(self.receiver, mapping[t]() if t in mapping else None)
 
 class NoticeEvent(Event, metaclass=ABCMeta):
     """

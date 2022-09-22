@@ -79,11 +79,12 @@ class CQHTTPMessageHandler:
         lm: ListenerManager = CONFIG.listener_manager
         if d.message_type == 'private':
             friend = Friend(d.user_id)
-            event = PrivateMessageEvent(message=d.message, message_id=d.message_id, raw_message=d.raw_message, message_chain=d.message_chain, sender=friend, receiver=friend)
+            event = PrivateMessageEvent(message=d.message, message_id=d.message_id, raw_message=d.raw_message, message_chain=d.message_chain,
+                                        sender=friend, receiver=friend, app=CONFIG.application)
         else:
             group = await self.utils.get_group_by_id(d.group_id)
             event = GroupMessageEvent(group=group,
                                       message=d.message, message_id=d.message_id, raw_message=d.raw_message, message_chain=d.message_chain,
-                                      sender=await self.utils.get_member_by_id(d.group_id, d.user_id), receiver=group)
+                                      sender=await self.utils.get_member_by_id(d.group_id, d.user_id), receiver=group, app=CONFIG.application)
         await lm.handle_message(PrivateMessageEvent if d.message_type == 'private' else GroupMessageEvent,
                          d.message, d.message_chain, event)

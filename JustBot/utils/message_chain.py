@@ -24,10 +24,11 @@ class MessageChain:
             strings.append(element.to_code())
         return MessageChain(strings, list(elements), False not in [element.sendable for element in elements])
 
-    def append_elements(self, *elements: Element) -> None:
+    def append_elements(self, *elements: Element) -> 'MessageChain':
         self.elements.extend(list(elements))
         self.result = ''.join([element.to_code() for element in self.elements if element != None])
         self.sendable if False not in list(elements) else self.sendable
+        return self
 
     def to_code(self) -> str:
         return self.result

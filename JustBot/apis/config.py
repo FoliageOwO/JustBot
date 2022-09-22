@@ -12,7 +12,7 @@ class Config:
     """
     adapter: Adapter
     nick_name: AnyStr
-    listener_manager: "ListenerManager"
+    listener_manager: 'ListenerManager'
     message_handler: Any
     adapter_utils: Any
-
+    application: 'BotApplication'
