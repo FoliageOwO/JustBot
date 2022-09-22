@@ -15,15 +15,22 @@ app = BotApplication(adapter)
 ## 注册监听器
 
 ```python
-from JustBot import PrivateMessageEvent, GroupMessageEvent,
-from JustBot import Event, MessageChain
-from JustBot.adapters.cqhttp import Text
+from JustBot import PrivateMessageEvent, GroupMessageEvent, MessageEvent
+from JustBot import MessageChain
+from JustBot.adapters.cqhttp import Plain
 
 @app.receiver(event=[PrivateMessageEvent, GroupMessageEvent])
-async def message_handler(event: PrivateMessageEvent or GroupMessageEvent, **kwargs):
+async def message_handler(event: MessageEvent, **kwargs):
     await app.send_msg(event.receiver,
         MessageChain.create(Plain('Hello, World!'))
     )
+```
+
+## 更简单地发送消息
+```python
+await app.send_msg(contact, MessageChain.create(Plain('hi'), Face(12))) # 创建消息链式
+await app.send_msg(contact, [Plain('hi'), Face(12)]) # 列表式, 也可以用元组
+await app.send_msg(contact, 'hello world') # 单个文字式
 ```
 
 ## 更多元素
