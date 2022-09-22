@@ -450,13 +450,13 @@ class Image(CQHTTPElement):
 
     def __init__(self, file: str, *,
                  url: str = None,
-                 type: ImageType = ImageType.NORMAL, sub_type: int = 0,
+                 type: ImageType = ImageType.NORMAL, subType: int = 0,
                  id: EffectType = None, c: int = None) -> None:
         super().__init__()
         self.file = file if file != None else url
         self.url = url
         self.type = Image.ImageType(type).value
-        self.subType = sub_type
+        self.subType = subType
         self.id = Image.EffectType(id).value if id != None else None # Image.EffectType.PUTONG.value
         self.c = c
 
