@@ -10,6 +10,14 @@
 
 - [ ] <0%> `TelegramAdapter`: 对[`telegram-bot-api`](https://github.com/eternnoir/pyTelegramBotAPI) 的实现
 
+## 开始使用
+
+```shell
+$ pip install jbot
+```
+
+用法见 [`USAGE.md`](USAGE.md).
+
 ## 待办
 
 - [x] 更便捷的 API
@@ -21,10 +29,6 @@
   * [x] 完善 `NoticeEvent`
   * [ ] 完善 `API`
 - [ ] 统一化文档
-
-## 用法
-
-见 [`USAGE.md`](USAGE.md).
 
 ## 关于
 

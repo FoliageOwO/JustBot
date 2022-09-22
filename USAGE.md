@@ -3,10 +3,11 @@
 ## 初始化 `BotApplication`
 
 ```python
-from JustBot import BotApplication, Adapter, CQHTTPConfig,
+from jbot import BotApplication
+from jbot.adapters.cqhttp import CQHTTPConfig, CQHTTPAdapter
 
 config = CQHTTPConfig(ws_host='127.0.0.1', ws_port=6700,
-                      http_host='127.0.0.1', http_port=5700, ws_reverse=False))
+                      http_host='127.0.0.1', http_port=5700, ws_reverse=False)
 adapter = CQHTTPAdapter(config)
 
 app = BotApplication(adapter)
@@ -15,20 +16,18 @@ app = BotApplication(adapter)
 ## 注册监听器
 
 ```python
-from JustBot import PrivateMessageEvent, GroupMessageEvent, MessageEvent
-from JustBot import MessageChain
-from JustBot.adapters.cqhttp import Plain
+from jbot.events.message_events import MessageEvent, PrivateMessageEvent, GroupMessageEvent
+from jbot.utils.message_chain import MessageChain
+from jbot.adapters.cqhttp.elements import Plain
 
 @app.receiver([PrivateMessageEvent, GroupMessageEvent])
 async def message_handler(event: MessageEvent, **kwargs):
-    await app.send_msg(event.receiver,
-        MessageChain.create(Plain('Hello, World!'))
-    )
+    await app.send_msg(event.receiver, 'Hello, World!')
 ```
 
 ## 更简单地发送消息
 ```python
-await app.send_msg(contact, MessageChain.create(Plain('hi'), Face(12))) # 创建消息链式
+await app.send_msg(contact, MessageChain.create(Plain('hi'), Face(12))) # 原始创建消息链式
 await app.send_msg(contact, [Plain('hi'), Face(12)]) # 列表式, 也可以用元组
 await app.send_msg(contact, 'hello world') # 单个文字式
 ```
@@ -36,7 +35,7 @@ await app.send_msg(contact, 'hello world') # 单个文字式
 ## 更多元素
 
 ```python
-from JustBot.adapters.cqhttp import Plain, Face, Share
+from jbot.adapters.cqhttp.elements import Plain, Face, Share
 
 MessageChain.create([
     Plain('Hello, World!', '还可以有第二行!'),
@@ -48,7 +47,7 @@ MessageChain.create([
 ## 关键词匹配器 & 命令匹配器
 
 ```python
-from JustBot import KeywordsMatcher, CommandMatcher
+from jbot.matchers import KeywordsMatcher, CommandMatcher
 
 @app.matcher(KeywordsMatcher(['你好', 'hello'])) # 关键词匹配
 @app.receiver(PrivateMessageEvent)
@@ -66,7 +65,7 @@ async def command_handler(event: PrivateMessageEvent, parameters: list or dict, 
 ## 权限组限定
 
 ```python
-from JustBot.utils.role import Role
+from jbot.utils.role import Role
 
 @app.role([Role.ADMIN, Role.OWNER]) # 只允许管理员和群主执行此命令
 @app.matcher(CommandMatcher('~dosomething'))
