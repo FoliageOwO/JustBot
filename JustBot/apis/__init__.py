@@ -4,3 +4,4 @@ from .contact import Contact
 from .event import Event, NoticeEvent, MessageEvent
 from .adapter import Adapter
 from .adapter_config import AdapterConfig
+from .matcher import Matcher

@@ -1,12 +1,12 @@
 from ..utils import MatcherUtil, MessageChain
-from ..apis import Element
+from ..apis import Element, Matcher
 
 from typing import List, Union, Tuple, Type
 
 import re
 
 
-class CommandMatcher:
+class CommandMatcher(Matcher):
     """
     命令匹配器
 

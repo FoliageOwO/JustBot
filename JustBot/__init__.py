@@ -1,8 +1,7 @@
 from .utils import Logger, MessageChain, Listener, ListenerManager
-from .apis import Adapter, Config, Event, Element, Contact
-from .matchers import KeywordMatcher, CommandMatcher
+from .apis import Adapter, Config, Event, Element, Contact, Matcher
 
-from typing import Type, Union, Coroutine, Any, List, Awaitable, Tuple, Callable
+from typing import Callable, Type, Union, Coroutine, Any, List, Awaitable, Tuple
 from rich.traceback import install
 
 import asyncio
@@ -92,34 +91,33 @@ class BotApplication:
     @staticmethod
     def coroutine(coroutine: Union[Coroutine, Any]) -> Any:
         return asyncio.run(coroutine)
+    
+    def __pretty_function(self, function: Callable) -> str:
+        return '[light_green]Function<%s>[/light_green]' % function.__name__
 
-    def receiver(self, *,
-                 event: Union[List[Type[Event]], Tuple[Type[Event]], Type[Event]],
-                 priority: int = 5, matcher: Union[KeywordMatcher, CommandMatcher] = None,
-                 parameters_convert: Type[Union[str, list, dict, None]] = list) -> "wrapper":
+    def receiver(self, event: Union[List[Type[Event]], Tuple[Type[Event]], Type[Event]], priority: int = 5) -> 'wrapper':
         """
         > 说明
-            添加消息监听器
+            添加事件监听器.
         > 参数
             + event [type[Event] | list[type[Event]] | tuple[type[Event]]]: 事件类型
             + priority [int]: 优先级 (越小越优先, 不能小于 0) [default=5]
-            + parameters_convert [type[str] | type[list] | type[dict] | None]: 消息事件中命令参数转换类型 [default=list]
-        > 返回
-            * wrapper [Callable]: 监听器装饰器
         """
 
-        if priority > 0:
-            parameters_convert = parameters_convert if isinstance(matcher, CommandMatcher) else None
+        if type(priority) is not int:
+            self.logger.error('无法注册监听器: 参数优先级类型错误!')
+            return lambda target: target
 
-            def wrapper(target: Callable and Awaitable):
+        if priority > 0:
+            def wrapper(target: Awaitable) -> Awaitable:
                 if asyncio.iscoroutinefunction(target):
                     ev = event
+                    
                     if ev.__class__ == list and len(list(ev)) == 1:
                         ev = ev[0]
-                    
-                    join = lambda e: self.listener_manager.join(listener=Listener(e, target), priority=priority, matcher=matcher, parameters_convert=parameters_convert)
-                    register = lambda multi, name: self.logger.info('注册监听器%s: [blue]%s[red][%s][/red][/blue] => [light_green]Function <%s>[/light_green].' % (
-                        ' (多个事件)' if multi else '', name, priority, target.__name__))
+                    join = lambda e: self.listener_manager.join(listener=Listener(e, target), priority=priority)
+                    register = lambda multi, name: self.logger.info('注册监听器%s: [blue]%s[red][%s][/red][/blue] => %s.' % (
+                        ' (多个事件)' if multi else '', name, priority, self.__pretty_function(target)))
 
                     if ev.__class__ not in [list, tuple]:
                         register(True, ev.__name__)
@@ -129,8 +127,82 @@ class BotApplication:
                         for e in ev:
                             join(e)
                 else:
-                    self.logger.warning('无法注册监听器: 已忽略函数 [light_green]%s[/light_green], 因为它必须是异步函数!' % target)
-
+                    self.logger.warning('无法注册监听器: 已忽略函数 [light_green]%s[/light_green], 它必须是异步函数!' % self.__pretty_function(target))    
+                return target
             return wrapper
         else:
             self.logger.error('无法注册监听器: 优先级不能小于 0!')
+    
+    def __set_matcher_or_convert(self, value: Union[Matcher, Type]) -> 'wrapper':
+        def wrapper(target: Awaitable) -> Awaitable:
+            is_matcher = value.__class__ in Matcher.__subclasses__()
+            flag = self.listener_manager.set_matcher(target, value) if is_matcher \
+                else self.listener_manager.set_param_convert(target, value)
+            if not flag:
+                self.logger.warning('无法设置%s: 函数 %s 不是一个监听器, 请将 `receiver` 装饰器置于底部!' %
+                                    ('消息匹配器' if is_matcher else '参数转换类型',
+                                     self.__pretty_function(target)))
+            return target
+        return wrapper
+    
+    def matcher(self, matcher: Matcher) -> 'wrapper':
+        """
+        > 说明
+            设置消息事件匹配器.
+        > 参数
+            + matcher [Matcher]: 消息匹配器
+        """
+        
+        return self.__set_matcher_or_convert(matcher)
+
+    def param_convert(self, param_convert: Type[Union[str, list, dict, None]]) -> 'wrapper':
+        """
+        > 说明
+            设置消息事件参数转换类型.
+        > 参数
+            + param_convert [type[str] | type[list] | type[dict] | None]: 消息事件中命令参数转换类型
+        """
+        
+        return self.__set_matcher_or_convert(param_convert)
+
+    # def receiver(self, *,
+    #              event: Union[List[Type[Event]], Tuple[Type[Event]], Type[Event]],
+    #              priority: int = 5, matcher: Union[KeywordMatcher, CommandMatcher] = None,
+    #              parameters_convert: Type[Union[str, list, dict, None]] = list) -> "wrapper":
+    #     """
+    #     > 说明
+    #         添加消息监听器
+    #     > 参数
+    #         + event [type[Event] | list[type[Event]] | tuple[type[Event]]]: 事件类型
+    #         + priority [int]: 优先级 (越小越优先, 不能小于 0) [default=5]
+    #         + parameters_convert [type[str] | type[list] | type[dict] | None]: 消息事件中命令参数转换类型 [default=list]
+    #     > 返回
+    #         * wrapper [Callable]: 监听器装饰器
+    #     """
+
+    #     if priority > 0:
+    #         parameters_convert = parameters_convert if isinstance(matcher, CommandMatcher) else None
+
+    #         def wrapper(target: Callable and Awaitable):
+    #             if asyncio.iscoroutinefunction(target):
+    #                 ev = event
+    #                 if ev.__class__ == list and len(list(ev)) == 1:
+    #                     ev = ev[0]
+                    
+    #                 join = lambda e: self.listener_manager.join(listener=Listener(e, target), priority=priority, matcher=matcher, parameters_convert=parameters_convert)
+    #                 register = lambda multi, name: self.logger.info('注册监听器%s: [blue]%s[red][%s][/red][/blue] => [light_green]Function <%s>[/light_green].' % (
+    #                     ' (多个事件)' if multi else '', name, priority, target.__name__))
+
+    #                 if ev.__class__ not in [list, tuple]:
+    #                     register(True, ev.__name__)
+    #                     join(ev)
+    #                 else:
+    #                     register(False, ' & '.join([e.__name__ for e in ev]))
+    #                     for e in ev:
+    #                         join(e)
+    #             else:
+    #                 self.logger.warning('无法注册监听器: 已忽略函数 [light_green]%s[/light_green], 因为它必须是异步函数!' % target)
+
+    #         return wrapper
+    #     else:
+    #         self.logger.error('无法注册监听器: 优先级不能小于 0!')

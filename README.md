@@ -12,9 +12,9 @@
 
 ## 待办
 
-- [ ] 更便捷的 API
+- [x] 更便捷的 API
   * [x] MessageEvent#reply
-  * [ ] BotApplication#receiver
+  * [x] BotApplication#receiver
 - [ ] 加入权限系统, 允许设置对应权限执行
 - [ ] 实现插件化
 - [ ] 完全实现 `go-cqhttp` 适配器

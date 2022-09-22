@@ -1,12 +1,12 @@
 from ..utils import MatcherUtil, MessageChain
-from ..apis import Element
+from ..apis import Element, Matcher
 
 from typing import List, Union, Tuple
 
 import re
 
 
-class KeywordMatcher:
+class KeywordMatcher(Matcher):
     """
     关键词匹配器
 

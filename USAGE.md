@@ -19,7 +19,7 @@ from JustBot import PrivateMessageEvent, GroupMessageEvent, MessageEvent
 from JustBot import MessageChain
 from JustBot.adapters.cqhttp import Plain
 
-@app.receiver(event=[PrivateMessageEvent, GroupMessageEvent])
+@app.receiver([PrivateMessageEvent, GroupMessageEvent])
 async def message_handler(event: MessageEvent, **kwargs):
     await app.send_msg(event.receiver,
         MessageChain.create(Plain('Hello, World!'))
@@ -50,21 +50,17 @@ MessageChain.create([
 ```python
 from JustBot import KeywordsMatcher, CommandMatcher
 
-@app.receiver(event=[PrivateMessageEvent],
-              matcher=KeywordsMatcher(['你好', 'hello'])) # 关键词匹配
+@app.matcher(KeywordsMatcher(['你好', 'hello'])) # 关键词匹配
+@app.receiver(PrivateMessageEvent)
 async def keywords_handler(event: PrivateMessageEvent, **kwargs):
-    await app.send_msg(event.receiver,
-        MessageChain.create(Plain('你好!'))
-    )
+    await event.reply('你好呀！') # 支持快速回复
 
-@app.receiver(event=[PrivateMessageEvent],
-              matcher=CommandMatcher(['~hello'], # 命令匹配
-              match_all_width=True), # 允许半角和全角  如 `!hello` 和 `！hello` 都可触发
-              parameters_convert=dict) # 命令参数转换
+@app.receiver(PrivateMessageEvent)
+@app.matcher(CommandMatcher(['~hello'], # 匹配命令 `~hello`
+             match_all_width=True)) # 允许半角和全角  如 `!hello` 和 `！hello` 都可触发)
+@app.param_convert(dict) # 命令参数转换  如 `!hello world=1` 可以转成 {'world': 1}
 async def command_handler(event: PrivateMessageEvent, parameters: list or dict, **kwargs):
-    await app.send_msg(event.receiver,
-        MessageChain.create(Plain('Hello, World!'))
-    )
+    await event.reply('hello from command~')
 ```
 
 ## 开始运行
