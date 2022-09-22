@@ -3,7 +3,7 @@ from setuptools import setup
 setup(
     name='JustBot',
     version='2.0.2',
-    description='一个轻量的 qqbot 简易框架',
+    description='一个轻量的机器人框架',
     author='WindLeaf233',
     author_email='me@windleaf.ml',
     py_modules=[
