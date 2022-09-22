@@ -95,7 +95,7 @@ class BotApplication:
     def __pretty_function(self, function: Callable) -> str:
         return '[light_green]Function<%s>[/light_green]' % function.__name__
 
-    def receiver(self, event: Union[List[Type[Event]], Tuple[Type[Event]], Type[Event]], priority: int = 5) -> 'wrapper':
+    def on(self, event: Union[List[Type[Event]], Tuple[Type[Event]], Type[Event]], priority: int = 5) -> 'wrapper':
         """
         > 说明
             添加事件监听器.
