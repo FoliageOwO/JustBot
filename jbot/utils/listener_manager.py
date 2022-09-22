@@ -50,7 +50,7 @@ class ListenerManager:
             listener: Listener = data['listener']
             matcher: Matcher = data.get('matcher', None)
             convert: Any = data.get('convert', None)
-            role: dict = data.get('role', None)
+            role: dict = data.get('role', {'role': [], 'todo': lambda: None})
             is_command_matcher = isinstance(matcher, CommandMatcher)
 
             trigger = lambda: self.trigger(listener, event, message_chain, message, is_command_matcher, convert, matcher)
