@@ -15,7 +15,7 @@
 - [x] 更便捷的 API
   * [x] MessageEvent#reply
   * [x] BotApplication#receiver
-- [ ] 加入权限系统, 允许设置对应权限执行
+- [x] 加入权限系统, 允许设置对应权限执行
 - [ ] 实现插件化
 - [ ] 完全实现 `go-cqhttp` 适配器
   * [ ] 完善 `NoticeEvent`

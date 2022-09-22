@@ -63,6 +63,23 @@ async def command_handler(event: PrivateMessageEvent, parameters: list or dict, 
     await event.reply('hello from command~')
 ```
 
+## 权限组限定
+
+```python
+from JustBot.utils.role import Role
+
+@app.role([Role.ADMIN, Role.OWNER]) # 只允许管理员和群主执行此命令
+@app.matcher(CommandMatcher('~dosomething'))
+@app.receiver(GroupMessageEvent)
+async def dosth(event: GroupMessageEvent, **kwargs):
+    # do something
+    ...
+
+@app.role([Role.ADMIN],
+    lambda event, *kw: event.reply('你没有权限执行此命令!')) # 允许传入一个异步函数  只接受 `event`, `message_chain`, `message` 三个参数
+...
+```
+
 ## 开始运行
 
 ```python

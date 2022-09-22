@@ -10,6 +10,6 @@ class Member(Contact):
     user_id: int
     group_id: int
     nickname: str = None
-    role: str = None
+    role: 'Role' = None
     last_sent_time: int = None
     join_time: int = None

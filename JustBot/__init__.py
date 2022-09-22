@@ -1,4 +1,4 @@
-from .utils import Logger, MessageChain, Listener, ListenerManager
+from .utils import Logger, MessageChain, Listener, ListenerManager, Role
 from .apis import Adapter, Config, Event, Element, Contact, Matcher
 
 from typing import Callable, Type, Union, Coroutine, Any, List, Awaitable, Tuple
@@ -133,15 +133,17 @@ class BotApplication:
         else:
             self.logger.error('无法注册监听器: 优先级不能小于 0!')
     
-    def __set_matcher_or_convert(self, value: Union[Matcher, Type]) -> 'wrapper':
+    def __set_decorator(self, value: Any, type: str, desc: str) -> 'wrapper':
         def wrapper(target: Awaitable) -> Awaitable:
-            is_matcher = value.__class__ in Matcher.__subclasses__()
-            flag = self.listener_manager.set_matcher(target, value) if is_matcher \
-                else self.listener_manager.set_param_convert(target, value)
+            mapping = {
+                'matcher': lambda: self.listener_manager.set_matcher(target, value),
+                'param_convert': lambda: self.listener_manager.set_param_convert(target, value),
+                'role': lambda: self.listener_manager.set_role(target, value)
+            }
+            flag = mapping[type]()
             if not flag:
-                self.logger.warning('无法设置%s: 函数 %s 不是一个监听器, 请将 `receiver` 装饰器置于底部!' %
-                                    ('消息匹配器' if is_matcher else '参数转换类型',
-                                     self.__pretty_function(target)))
+                self.logger.warning('无法设置%s: 函数 %s 不是一个监听器, 请检查参数及装饰顺序!' %
+                                   (desc, self.__pretty_function(target)))
             return target
         return wrapper
     
@@ -153,7 +155,7 @@ class BotApplication:
             + matcher [Matcher]: 消息匹配器
         """
         
-        return self.__set_matcher_or_convert(matcher)
+        return self.__set_decorator(matcher, 'matcher', '消息匹配器')
 
     def param_convert(self, param_convert: Type[Union[str, list, dict, None]]) -> 'wrapper':
         """
@@ -163,4 +165,15 @@ class BotApplication:
             + param_convert [type[str] | type[list] | type[dict] | None]: 消息事件中命令参数转换类型
         """
         
-        return self.__set_matcher_or_convert(param_convert)
+        return self.__set_decorator(param_convert, 'param_convert', '参数转换类型')
+
+    def role(self, role: Union[Role, List[Role], Tuple[Role]], todo: Awaitable = None) -> 'wrapper':
+        """
+        > 说明
+            设置消息事件权限组. 如果不在指定权限组中则会执行 `todo` 或直接忽略事件.
+        > 参数
+            + target [Role | list[Role] | tuple[Role]]: 权限组
+            + todo [Optional] [Awaitable]: 如果不在权限组执行的异步函数, 只能接受 `event`, `message`, `message_chain` 三个参数
+        """
+        
+        return self.__set_decorator({'role': role, 'todo': todo}, 'role', '权限组')
