@@ -35,7 +35,7 @@ $ pip install jbot
 - [ ] 完全实现 `go-cqhttp` 适配器
   * [x] 完善 `NoticeEvent`
   * [ ] 完善 `API`
-- [ ] 统一化文档
+- [x] 统一化文档
 - [ ] 使用 `WebSocket` 通信, 而不是 `HTTP`
 
 ## 关于
