@@ -4,6 +4,7 @@ from ..apis import MessageEvent, NoticeEvent, Matcher
 from ..matchers import CommandMatcher
 from ..utils import MessageChain, PriorityQueue
 from ..utils.nlp import NLP
+from ..utils.utils import pretty_function
 
 from typing import Awaitable, Type, Union, Any
 
@@ -77,13 +78,16 @@ class ListenerManager:
     
     async def trigger(self, listener, event, message_chain, message, is_command_matcher, convert, matcher, nlp_flag, nlp_params, nlp_command):
         params = nlp_params if nlp_flag else (self.__get_parameters(message, convert) if is_command_matcher else None)
-        execute_function = lambda: listener.target(
-            event=event, message=message, message_chain=message_chain,
-            command=nlp_command if nlp_flag else (message.split()[0] if is_command_matcher else None),
-            **params)
-        await execute_function() \
-            if not matcher else \
-            (await execute_function() if matcher.match(message_chain) or nlp_flag else None)
+        try:
+            execute_function = lambda: listener.target(
+                event=event, message=message, message_chain=message_chain,
+                command=nlp_command if nlp_flag else (message.split()[0] if is_command_matcher else None),
+                **params)
+            await execute_function() \
+                if not matcher else \
+                (await execute_function() if matcher.match(message_chain) or nlp_flag else None)
+        except Exception:
+            self.logger.error('无法触发监听器函数, 请检查函数 %s 的参数是否完整!' % pretty_function(listener.target))
     
     async def handle_event(self, event_type: Type[NoticeEvent], code:str, event: NoticeEvent) -> None:
         for data in self.pq:

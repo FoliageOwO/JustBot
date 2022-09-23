@@ -1,5 +1,6 @@
 from .utils import Logger, MessageChain, Listener, ListenerManager, Role
 from .apis import Adapter, Config, Event, Element, Contact, Matcher
+from .utils.utils import pretty_function
 
 from typing import Callable, Dict, Type, Union, Coroutine, Any, List, Awaitable, Tuple
 from rich.traceback import install
@@ -91,9 +92,6 @@ class BotApplication:
     @staticmethod
     def coroutine(coroutine: Union[Coroutine, Any]) -> Any:
         return asyncio.run(coroutine)
-    
-    def __pretty_function(self, function: Callable) -> str:
-        return '[light_green]Function<%s>[/light_green]' % function.__name__
 
     def on(self, event: Union[List[Type[Event]], Tuple[Type[Event]], Type[Event]], priority: int = 5) -> 'wrapper':
         """
@@ -117,7 +115,7 @@ class BotApplication:
                         ev = ev[0]
                     join = lambda e: self.listener_manager.join(listener=Listener(e, target), priority=priority)
                     register = lambda multi, name: self.logger.info('注册监听器%s: [blue]%s[red][%s][/red][/blue] => %s.' % (
-                        ' (多个事件)' if multi else '', name, priority, self.__pretty_function(target)))
+                        ' (多个事件)' if multi else '', name, priority, pretty_function(target)))
 
                     if ev.__class__ not in [list, tuple]:
                         register(True, ev.__name__)
@@ -127,7 +125,7 @@ class BotApplication:
                         for e in ev:
                             join(e)
                 else:
-                    self.logger.warning('无法注册监听器: 已忽略函数 [light_green]%s[/light_green], 它必须是异步函数!' % self.__pretty_function(target))    
+                    self.logger.warning('无法注册监听器: 已忽略函数 [light_green]%s[/light_green], 它必须是异步函数!' % pretty_function(target))    
                 return target
             return wrapper
         else:
@@ -144,7 +142,7 @@ class BotApplication:
             flag = mapping[type]()
             if not flag:
                 self.logger.warning('无法设置%s: 函数 %s 不是一个监听器, 请检查参数及装饰顺序!' %
-                                   (desc, self.__pretty_function(target)))
+                                   (desc, pretty_function(target)))
             return target
         return wrapper
     
