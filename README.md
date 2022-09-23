@@ -1,6 +1,13 @@
 # JustBot
 
-一个轻量的机器人框架
+![](https://img.shields.io/github/repo-size/WindLeaf233/JustBot)
+![](https://img.shields.io/pypi/v/jbot)
+![](https://img.shields.io/github/license/WindLeaf233/JustBot)
+![](https://img.shields.io/badge/made%20with-%E2%9D%A4-important)
+
+一个轻量的异步 QQ 机器人框架.
+
+---
 
 ## 适配器
 
