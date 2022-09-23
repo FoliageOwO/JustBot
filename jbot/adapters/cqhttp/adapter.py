@@ -26,7 +26,7 @@ class CQHTTPAdapter(Adapter):
     > 说明
         CQHTTP 适配器.
     > 参数
-        * config [CQHTTPConfig]: 适配器对应的配置对象
+        + config [CQHTTPConfig]: 适配器对应的配置对象
     """
     def __init__(self, config: CQHTTPConfig) -> None:
         self.name = 'CQHTTP'

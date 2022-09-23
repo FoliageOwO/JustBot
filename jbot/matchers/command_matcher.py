@@ -8,11 +8,12 @@ import re
 
 class CommandMatcher(Matcher):
     """
-    命令匹配器
-
-    :param command: 命令字符串或列表
-    :param match_all_width: 是否匹配半角和全角 [默认: False]
-    :param ignore: 忽略消息中的元素 [默认: 空列表]
+    > 说明
+        命令匹配器.
+    > 参数
+        + command [list[str] | tuple[str] | str]: 命令字符串或列表
+        + match_all_width [bool]: 是否同时匹配半角和全角 [default=False]
+        + ignore [list[type[Element]]]: 忽略消息中的元素, 如忽略 `At`, `Reply` [defualt=[]]
     """
 
     def __init__(self, command: Union[List[str], Tuple[str], str],

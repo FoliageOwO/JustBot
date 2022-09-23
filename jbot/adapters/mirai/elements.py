@@ -4,7 +4,7 @@ from ...apis import Element
 class MiraiElement(Element):
     """
     > 说明
-        Mirai 消息链元素
+        Mirai 消息链元素.
     """
     pass
 

@@ -17,7 +17,7 @@ CONFIG = Config(*[None] * 6)
 class BotApplication:
     """
     > 说明
-        机器人实例类
+        机器人实例类.
     > 参数
         + adapter [Adapter]: 适配器实例
     """
@@ -48,7 +48,7 @@ class BotApplication:
                        message: Union[MessageChain, Union[Element, List[Element], Tuple[Element]], str]) -> None:
         """
         > 说明
-            向联系人发送消息
+            向联系人发送消息.
         > 参数
             + target [Contact]: 联系人实例
             + message [MessageChain | Element | str]: 消息链或元素或纯文本 (纯文本会自动转为 ``Plain``, 元素会自动转化为 ``MessageChain``)

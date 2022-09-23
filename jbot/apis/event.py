@@ -7,7 +7,7 @@ from typing import Union, List, Tuple
 class Event:
     """
     > 说明
-        事件 ``Event`` 基类.
+        事件基类.
     """
     
     pass
@@ -16,14 +16,14 @@ class Event:
 class MessageEvent(Event, metaclass=ABCMeta):
     """
     > 说明
-        消息事件.
+        消息事件基类.
     > 参数
         + message [str]: 消息字符串
         + message_id [int]: 消息 ID
         + raw_message [str]: 源消息, 未经加工
         + message_chain [MessageChain]: 消息链对象
         + sender [Contact]: 发送者, 联系人对象
-        + receiver [Contact]: 接受者, 如果为私聊则是用户对象, 反之为群对象
+        + receiver [Contact]: 接受者, 如果为私聊则是好友对象, 反之为群对象
     """
     
     @abstractmethod

@@ -4,7 +4,7 @@ from typing import Any
 class Element(metaclass=ABCMeta):
     """
     > 说明
-        消息链元素抽象类.
+        消息链元素基类.
     """
 
     __type__: str
@@ -18,7 +18,7 @@ class Element(metaclass=ABCMeta):
     def as_display(self) -> str:
         """
         > 说明
-            将 ``Element 对象`` 转换为 ``易读字符串``.
+            将 `Element 对象` 转换为 `易读字符串`.
         > 返回
             * str: 转换后的字符串
         > 示例

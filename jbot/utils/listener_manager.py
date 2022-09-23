@@ -12,7 +12,7 @@ from typing import Awaitable, Type, Union, Any
 class ListenerManager:
     """
     > 说明
-        监听器管理类
+        监听器管理器, 负责调用和处理监听器.
     """
 
     def __init__(self) -> None:

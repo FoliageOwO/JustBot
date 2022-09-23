@@ -10,14 +10,14 @@ install()
 class Adapter(metaclass=ABCMeta):
     """
     > 说明
-        适配器抽象类，用于实现适配器模式
+        适配器基类，用于实现适配器模式.
     """
 
     @abstractmethod
     def __init__(self) -> None:
         ...
 
-    # TODO: 添加文档
+    # TODO 添加文档
     @abstractmethod
     def _request_api(self, api_path: str) -> dict:
         ...

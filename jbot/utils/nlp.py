@@ -14,6 +14,10 @@ class Handler:
     c: float
 
 class NLP:
+    """
+    > 说明
+        自然语言处理器.
+    """
     def __init__(self) -> None:
         self.handlers: List[Handler] = []
     

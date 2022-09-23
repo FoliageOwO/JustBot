@@ -7,7 +7,8 @@ from dataclasses import dataclass
 @dataclass
 class Listener:
     """
-    监听 ``Listener`` 类
+    > 说明
+        监听器类, 通常为入口程序的函数包装而来.
     """
 
     event: Type[Event]

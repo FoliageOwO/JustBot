@@ -11,7 +11,7 @@ from json import dumps, loads as json
 class CQHTTPElement(Element):
     """
     > 说明
-        CQHTTP 消息链元素
+        CQHTTP 消息链元素.
     """
     pass
 
@@ -19,7 +19,7 @@ class CQHTTPElement(Element):
 class Utils:
     """
     > 说明
-        CQHTTP 元素类中的工具类
+        CQHTTP 元素类中的工具类.
     """
 
     T = NewType('T', Any)

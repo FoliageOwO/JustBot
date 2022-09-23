@@ -1,21 +1,22 @@
 from ..utils import MatcherUtil, MessageChain
 from ..apis import Element, Matcher
 
-from typing import List, Union, Tuple
+from typing import List, Type, Union, Tuple
 
 import re
 
 
 class KeywordMatcher(Matcher):
     """
-    关键词匹配器
-
-    :param keyword: 关键词字符串或列表
-    :param match_all_width: 是否匹配半角和全角 [默认: False]
-    :param ignore: 忽略消息中的元素 [默认: 空列表]
+    > 说明
+        关键词匹配器.
+    > 参数
+        + keyword [list[str] | tuple[str] | str]: 关键词字符串或列表
+        + match_all_width [bool]: 是否同时匹配半角和全角 [default=False]
+        + ignore [list[type[Element]]]: 忽略消息中的元素, 如忽略 `At`, `Reply` [defualt=[]]
     """
     def __init__(self, keyword: Union[List[str], Tuple[str], str],
-                 match_all_width: bool = False, ignore: Union[List[Element], Tuple[Element]] = []) -> None:
+                 match_all_width: bool = False, ignore: Union[List[Type[Element]], Tuple[Type[Element]]] = []) -> None:
         self.keyword = list(keyword)
         self.match_all_width = match_all_width
         self.ignore = ignore

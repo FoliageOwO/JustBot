@@ -1,6 +1,7 @@
 class Contact:
     """
-    联系人 ``Contact`` 基类.
+    > 说明
+        联系人基类.
     """
 
     pass
