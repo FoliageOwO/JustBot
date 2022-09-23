@@ -29,7 +29,7 @@ class NLP:
             return False
         return True
 
-    async def handle(self, message_chain: 'MessageChain', command: str) -> Tuple[Dict[str, str], bool]:
+    async def handle(self, message_chain: 'MessageChain', command: str) -> Tuple[Dict[str, str], bool, str]:
         queue: List[Handler] = []
         message: str = ' '.join([plain.as_display()
                            for plain in message_chain.elements

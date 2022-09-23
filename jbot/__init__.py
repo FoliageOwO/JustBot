@@ -72,9 +72,10 @@ class BotApplication:
                 await send(message)
             elif t is str:
                 plain: Element = \
-                    [i for i in elements
-                     if self.adapter.name.lower() in str(i) and i.__name__ == 'Plain'
-                     ][0](message)
+                    [[k for k in i.__subclasses__() if k.__name__ == 'Plain']
+                     for i in elements
+                     if self.adapter.name.lower() in str(i).lower()
+                    ][0][0](message)
                 await send(MessageChain.create(plain))
             elif is_element or is_list:
                 if is_element:

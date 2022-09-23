@@ -61,7 +61,7 @@ class ListenerManager:
             nlp: dict = data.get('nlp', None)
             is_command_matcher = isinstance(matcher, CommandMatcher)
 
-            nlp_params, nlp_flag, nlp_command = await self.nlp.handle(message_chain=message_chain, command=matcher.cmd if is_command_matcher else '') if nlp else ({}, False)
+            nlp_params, nlp_flag, nlp_command = await self.nlp.handle(message_chain=message_chain, command=matcher.cmd if is_command_matcher else '') if nlp else ({}, False, None)
             trigger = lambda: self.trigger(listener, event, message_chain, message, is_command_matcher, convert, matcher, nlp_flag, nlp_params, nlp_command)
             if listener.event == event_type:
                 role_list = [i.value for i in role['role']]
@@ -77,17 +77,17 @@ class ListenerManager:
         self.pq.rejoin()
     
     async def trigger(self, listener, event, message_chain, message, is_command_matcher, convert, matcher, nlp_flag, nlp_params, nlp_command):
-        params = nlp_params if nlp_flag else (self.__get_parameters(message, convert) if is_command_matcher else None)
+        params = nlp_params if nlp_flag else (self.__get_parameters(message, convert) if is_command_matcher else {})
         try:
             execute_function = lambda: listener.target(
                 event=event, message=message, message_chain=message_chain,
-                command=nlp_command if nlp_flag else (message.split()[0] if is_command_matcher else None),
+                command=nlp_command if nlp_flag else ((message.split()[0] if message.split() != [] else message) if is_command_matcher else None),
                 **params)
             await execute_function() \
                 if not matcher else \
                 (await execute_function() if matcher.match(message_chain) or nlp_flag else None)
-        except Exception:
-            self.logger.error('无法触发监听器函数, 请检查函数 %s 的参数是否完整!' % pretty_function(listener.target))
+        except Exception as err:
+            self.logger.error('无法触发监听器函数, 请检查函数 %s 的参数是否完整: %s' % (pretty_function(listener.target), err))
     
     async def handle_event(self, event_type: Type[NoticeEvent], code:str, event: NoticeEvent) -> None:
         for data in self.pq:
