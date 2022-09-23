@@ -37,6 +37,7 @@ $ pip install jbot
   * [ ] 完善 `API`
 - [x] 统一化文档
 - [ ] 使用 `WebSocket` 通信, 而不是 `HTTP`
+- [ ] 在连接 `WebSocket` 的时候, 添加重连功能, 而不是直接退出程序
 
 ## 关于
 
