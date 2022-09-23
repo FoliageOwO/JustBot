@@ -5,3 +5,4 @@ from .priority_queue import PriorityQueue
 from .listener_manager import ListenerManager
 from .listener import Listener
 from .role import Role
+from .nlp import NLP, Handler

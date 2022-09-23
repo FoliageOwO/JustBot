@@ -17,8 +17,8 @@ class CommandMatcher(Matcher):
 
     def __init__(self, command: Union[List[str], Tuple[str], str],
                  match_all_width: bool = False, ignore: Union[List[Type[Element]], Tuple[Type[Element]]] = ()) -> None:
-        cmd = command if isinstance(command, list) else [command]
-        self.command = [c + ' ' for c in cmd] + [c + '\n' for c in cmd] + [c for c in cmd]
+        self.cmd = command if isinstance(command, list) else [command]
+        self.command = [c + ' ' for c in self.cmd] + [c + '\n' for c in self.cmd] + [c for c in self.cmd]
         self.match_all_width = match_all_width
         self.ignore = ignore
 

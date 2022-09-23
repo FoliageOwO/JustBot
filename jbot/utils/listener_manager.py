@@ -3,6 +3,7 @@ from .listener import Listener
 from ..apis import MessageEvent, NoticeEvent, Matcher
 from ..matchers import CommandMatcher
 from ..utils import MessageChain, PriorityQueue
+from ..utils.nlp import NLP
 
 from typing import Awaitable, Type, Union, Any
 
@@ -16,6 +17,7 @@ class ListenerManager:
     def __init__(self) -> None:
         self.listeners = dict()
         self.pq = PriorityQueue()
+        self.nlp = NLP()
         self.logger = Logger('Util/ListenerManager')
 
     def join(self, listener: Listener, priority: int = 5) -> None:
@@ -45,15 +47,21 @@ class ListenerManager:
         get_role = mapping.get(role_list.__class__.__name__, None)
         return self.__set_data(function, 'role', {'role': get_role(), 'todo': role['todo']}) if get_role else False
 
+    def set_nlp(self, function: Awaitable, nlp: dict) -> bool:
+        self.nlp.add_handler(function=function, keywords=nlp['keywords'], params=nlp['params'], c=nlp['c'])
+        return self.__set_data(function, 'nlp', nlp)
+
     async def handle_message(self, event_type: Type[MessageEvent], message: str, message_chain: MessageChain, event: MessageEvent) -> None:
         for data in self.pq:
             listener: Listener = data['listener']
             matcher: Matcher = data.get('matcher', None)
             convert: Any = data.get('convert', None)
             role: dict = data.get('role', {'role': [], 'todo': lambda: None})
+            nlp: dict = data.get('nlp', None)
             is_command_matcher = isinstance(matcher, CommandMatcher)
 
-            trigger = lambda: self.trigger(listener, event, message_chain, message, is_command_matcher, convert, matcher)
+            nlp_params, nlp_flag, nlp_command = await self.nlp.handle(message_chain=message_chain, command=matcher.cmd if is_command_matcher else '') if nlp else ({}, False)
+            trigger = lambda: self.trigger(listener, event, message_chain, message, is_command_matcher, convert, matcher, nlp_flag, nlp_params, nlp_command)
             if listener.event == event_type:
                 role_list = [i.value for i in role['role']]
                 if role_list != [] and event.__class__.__name__ == 'GroupMessageEvent':
@@ -67,14 +75,15 @@ class ListenerManager:
                     
         self.pq.rejoin()
     
-    async def trigger(self, listener, event, message_chain, message, is_command_matcher, convert, matcher):
+    async def trigger(self, listener, event, message_chain, message, is_command_matcher, convert, matcher, nlp_flag, nlp_params, nlp_command):
+        params = nlp_params if nlp_flag else (self.__get_parameters(message, convert) if is_command_matcher else None)
         execute_function = lambda: listener.target(
             event=event, message=message, message_chain=message_chain,
-            command=message.split()[0] if is_command_matcher else None,
-            parameters=self.__get_parameters(message, convert) if is_command_matcher else None)
+            command=nlp_command if nlp_flag else (message.split()[0] if is_command_matcher else None),
+            **params)
         await execute_function() \
             if not matcher else \
-            (await execute_function() if matcher.match(message_chain) else None)
+            (await execute_function() if matcher.match(message_chain) or nlp_flag else None)
     
     async def handle_event(self, event_type: Type[NoticeEvent], code:str, event: NoticeEvent) -> None:
         for data in self.pq:

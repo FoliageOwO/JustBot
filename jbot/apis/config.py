@@ -1,4 +1,5 @@
 from .adapter import Adapter
+from ..utils.nlp import NLP
 
 from dataclasses import dataclass
 from typing import AnyStr, Any

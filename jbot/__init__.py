@@ -1,7 +1,7 @@
 from .utils import Logger, MessageChain, Listener, ListenerManager, Role
 from .apis import Adapter, Config, Event, Element, Contact, Matcher
 
-from typing import Callable, Type, Union, Coroutine, Any, List, Awaitable, Tuple
+from typing import Callable, Dict, Type, Union, Coroutine, Any, List, Awaitable, Tuple
 from rich.traceback import install
 
 import asyncio
@@ -138,7 +138,8 @@ class BotApplication:
             mapping = {
                 'matcher': lambda: self.listener_manager.set_matcher(target, value),
                 'param_convert': lambda: self.listener_manager.set_param_convert(target, value),
-                'role': lambda: self.listener_manager.set_role(target, value)
+                'role': lambda: self.listener_manager.set_role(target, value),
+                'nlp': lambda: self.listener_manager.set_nlp(target, value)
             }
             flag = mapping[type]()
             if not flag:
@@ -177,3 +178,15 @@ class BotApplication:
         """
         
         return self.__set_decorator({'role': role, 'todo': todo}, 'role', '权限组')
+    
+    def nlp(self, c: float, keywords: Union[List[str], Tuple[str]], params: Dict[str, str]) -> 'wrapper':
+        """
+        > 说明
+            绑定函数为自然语言处理器.
+        > 参数
+            + c [float]: 置信度
+            + keywords [list[str] | tuple[str]]: 关键词
+            + params: [dict[str, str]]: 需要处理的参数, 格式为 `参数名 -> 词语成分`
+        """
+        
+        return self.__set_decorator({'c': c, 'keywords': keywords, 'params': params}, 'nlp', '自然语言处理')

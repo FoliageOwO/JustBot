@@ -79,6 +79,15 @@ async def dosth(event: GroupMessageEvent, **kwargs):
 ...
 ```
 
+## 自然语言处理
+```python
+@app.nlp(c=80, keywords=['天气'], params={'city': 'ns', 'time': 't'})
+@app.matcher(CommandMatcher('!weather'))
+@app.on([GroupMessageEvent])
+async def weather(event: GroupMessageEvent, city: str = '北京', time: str = '今天', **kwargs):
+    await event.reply(f'{city}的{time}的天气是...')
+```
+
 ## 开始运行
 
 ```python
