@@ -20,7 +20,7 @@ from jbot.events.message_events import MessageEvent, PrivateMessageEvent, GroupM
 from jbot.utils.message_chain import MessageChain
 from jbot.adapters.cqhttp.elements import Plain
 
-@app.receiver([PrivateMessageEvent, GroupMessageEvent])
+@app.on([PrivateMessageEvent, GroupMessageEvent])
 async def message_handler(event: MessageEvent, **kwargs):
     await app.send_msg(event.receiver, 'Hello, World!')
 ```
@@ -50,14 +50,14 @@ MessageChain.create([
 from jbot.matchers import KeywordsMatcher, CommandMatcher
 
 @app.matcher(KeywordsMatcher(['你好', 'hello'])) # 关键词匹配
-@app.receiver(PrivateMessageEvent)
+@app.on(PrivateMessageEvent)
 async def keywords_handler(event: PrivateMessageEvent, **kwargs):
     await event.reply('你好呀！') # 支持快速回复
 
-@app.receiver(PrivateMessageEvent)
 @app.matcher(CommandMatcher(['~hello'], # 匹配命令 `~hello`
              match_all_width=True)) # 允许半角和全角  如 `!hello` 和 `！hello` 都可触发)
 @app.param_convert(dict) # 命令参数转换  如 `!hello world=1` 可以转成 {'world': 1}
+@app.on(PrivateMessageEvent)
 async def command_handler(event: PrivateMessageEvent, parameters: list or dict, **kwargs):
     await event.reply('hello from command~')
 ```
@@ -69,7 +69,7 @@ from jbot.utils.role import Role
 
 @app.role([Role.ADMIN, Role.OWNER]) # 只允许管理员和群主执行此命令
 @app.matcher(CommandMatcher('~dosomething'))
-@app.receiver(GroupMessageEvent)
+@app.on(GroupMessageEvent)
 async def dosth(event: GroupMessageEvent, **kwargs):
     # do something
     ...
