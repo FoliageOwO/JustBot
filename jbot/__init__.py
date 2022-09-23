@@ -2,13 +2,13 @@ from .utils import Logger, MessageChain, Listener, ListenerManager, Role
 from .apis import Adapter, Config, Event, Element, Contact, Matcher
 from .utils.utils import pretty_function
 
-from typing import Callable, Dict, Type, Union, Coroutine, Any, List, Awaitable, Tuple
+from typing import Dict, Type, Union, Coroutine, Any, List, Awaitable, Tuple
 from rich.traceback import install
 
 import asyncio
 
 install()
-VERSION = '2.1.1-rc1'
+VERSION = '2.1.2-pre1'
 HTTP_PROTOCOL = 'http://'
 WS_PROTOCOL = 'ws://'
 CONFIG = Config(*[None] * 6)

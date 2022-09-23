@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='jbot',
-    version='2.1.1-rc1',
+    version='2.1.2-pre1',
     description='一个轻量的机器人框架',
     url='https://github.com/WindLeaf233/JustBot',
     author='WindLeaf233',
