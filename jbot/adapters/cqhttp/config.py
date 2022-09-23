@@ -16,7 +16,7 @@ class CQHTTPConfig(AdapterConfig):
         + ws_reverse [bool]: 是否为反向 WebSocket [default=False]
     """
     ws_host: str = '127.0.0.1'
-    ws_port: int = 6700
+    ws_port: int = 8080
     http_host: str = '127.0.0.1'
     http_port: int = 5700
     ws_reverse: bool = False

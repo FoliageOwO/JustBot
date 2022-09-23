@@ -1,6 +1,6 @@
-rich==10.1.0
-websockets==8.1
-nest-asyncio==1.5.1
-aiohttp==3.7.3
-overrides
+rich>=12.5.1
+websockets>=10.3
+nest-asyncio>=1.5.5
+aiohttp>=3.8.3
+overrides>=6.2.0
 jieba>=0.42.1

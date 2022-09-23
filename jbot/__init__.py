@@ -8,7 +8,7 @@ from rich.traceback import install
 import asyncio
 
 install()
-VERSION = '2.1.2-pre1'
+VERSION = '2.1.3a1'
 HTTP_PROTOCOL = 'http://'
 WS_PROTOCOL = 'ws://'
 CONFIG = Config(*[None] * 6)
