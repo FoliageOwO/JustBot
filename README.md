@@ -38,6 +38,14 @@ $ pip install jbot
 - [x] 统一化文档
 - [ ] 使用 `WebSocket` 通信, 而不是 `HTTP`
 - [ ] 在连接 `WebSocket` 的时候, 添加重连功能, 而不是直接退出程序
+- [ ] 简化装饰器
+- [ ] 自适应函数参数
+- [ ] 添加 `BotApplication#to_me` 装饰器
+- [ ] 使用 `BotApplication#command`, `BotApplication#keyword` 装饰器代替 `BotApplication#mathcer`
+- [ ] 优化日志输出, 添加 `DEBUG` 模式
+- [ ] 脚手架实现
+- [ ] 更好的异常处理
+- [ ] 匹配器重载
 
 ## 关于
 
