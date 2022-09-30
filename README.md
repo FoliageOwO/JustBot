@@ -41,7 +41,7 @@ $ pip install jbot
 - [ ] 简化装饰器
 - [ ] 自适应函数参数
 - [ ] 添加 `BotApplication#to_me` 装饰器
-- [ ] 使用 `BotApplication#command`, `BotApplication#keyword` 装饰器代替 `BotApplication#mathcer`
+- [ ] 使用 `BotApplication#command`, `BotApplication#keyword` 装饰器代替 `BotApplication#matcher`
 - [ ] 优化日志输出, 添加 `DEBUG` 模式
 - [ ] 脚手架实现
 - [ ] 更好的异常处理
