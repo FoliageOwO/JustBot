@@ -8,6 +8,8 @@ from jbot.adapters.cqhttp import CQHTTPConfig, CQHTTPAdapter
 
 config = CQHTTPConfig(ws_host='127.0.0.1', ws_port=6700,
                       http_host='127.0.0.1', http_port=5700, ws_reverse=False)
+# 或直接默认配置
+# config = CQHTTPConfig()
 adapter = CQHTTPAdapter(config)
 
 app = BotApplication(adapter)
