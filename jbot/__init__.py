@@ -1,6 +1,7 @@
 from .utils import Logger, MessageChain, Listener, ListenerManager, Role
 from .apis import Adapter, Config, Event, Element, Contact, Matcher
 from .utils.utils import pretty_function
+from .matchers import CommandMatcher, KeywordMatcher
 
 from typing import Dict, Type, Union, Coroutine, Any, List, Awaitable, Tuple
 from rich.traceback import install
@@ -147,9 +148,37 @@ class BotApplication:
             return target
         return wrapper
     
+    def command(self, command: Union[List[str], Tuple[str], str],
+                match_all_width: bool = False, ignore: Union[List[Type[Element]], Tuple[Type[Element]]] = ()) -> 'wrapper':
+        """
+        > 说明
+            装饰函数为命令匹配器.
+        > 参数
+            + command [list[str] | tuple[str] | str]: 命令字符串或列表
+            + match_all_width [bool]: 是否同时匹配半角和全角 [default=False]
+            + ignore [list[type[Element]]]: 忽略消息中的元素, 如忽略 `At`, `Reply` [defualt=()]
+        """
+        command_matcher = CommandMatcher(command=command, match_all_width=match_all_width, ignore=ignore)
+        return self.__set_decorator(command_matcher, 'matcher', '消息匹配器')
+
+    def keyword(self, keyword: Union[List[str], Tuple[str], str],
+                match_all_width: bool = False, ignore: Union[List[Type[Element]], Tuple[Type[Element]]] = ()):
+        """
+        > 说明
+            装饰函数为关键词匹配器.
+        > 参数
+            + keyword [list[str] | tuple[str] | str]: 关键词字符串或列表
+            + match_all_width [bool]: 是否同时匹配半角和全角 [default=False]
+            + ignore [list[type[Element]]]: 忽略消息中的元素, 如忽略 `At`, `Reply` [defualt=()]
+        """
+        keyword_matcher = KeywordMatcher(keyword=keyword, match_all_width=match_all_width, ignore=ignore)
+        return self.__set_decorator(keyword_matcher, 'matcher', '消息匹配器')
+    
     def matcher(self, matcher: Matcher) -> 'wrapper':
         """
         > 说明
+            [已弃用] 请使用 `@bot.command` 和 `@bot.keyword`
+            
             设置消息事件匹配器.
         > 参数
             + matcher [Matcher]: 消息匹配器

@@ -13,10 +13,10 @@ class KeywordMatcher(Matcher):
     > 参数
         + keyword [list[str] | tuple[str] | str]: 关键词字符串或列表
         + match_all_width [bool]: 是否同时匹配半角和全角 [default=False]
-        + ignore [list[type[Element]]]: 忽略消息中的元素, 如忽略 `At`, `Reply` [defualt=[]]
+        + ignore [list[type[Element]]]: 忽略消息中的元素, 如忽略 `At`, `Reply` [defualt=()]
     """
     def __init__(self, keyword: Union[List[str], Tuple[str], str],
-                 match_all_width: bool = False, ignore: Union[List[Type[Element]], Tuple[Type[Element]]] = []) -> None:
+                 match_all_width: bool = False, ignore: Union[List[Type[Element]], Tuple[Type[Element]]] = ()) -> None:
         self.keyword = list(keyword)
         self.match_all_width = match_all_width
         self.ignore = ignore
