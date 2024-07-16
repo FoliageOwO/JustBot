@@ -1,4 +1,5 @@
 from .elements import Utils as ElementsUtils
+from ...apis.adapter import Adapter
 from ...utils import ListenerManager, MessageChain
 from ...events import PrivateMessageEvent, GroupMessageEvent
 from ...contact import Friend
@@ -18,10 +19,10 @@ class Data:
 d = Data()
 
 
-class CQHTTPMessageHandler:
+class OneBot11MessageHandler:
     """
     > 说明
-        CQHTTP 消息处理器.
+        OneBot11 消息处理器.
     > 参数
         + adapter [Adapter]: 适配器对象
     """
@@ -39,6 +40,7 @@ class CQHTTPMessageHandler:
             + code_string [str]: 消息内容
         """
         chain = MessageChain.create()
+        
         replaced_string = code_string
         colored_message = code_string
         while True:
@@ -67,7 +69,7 @@ class CQHTTPMessageHandler:
                 for kk in v.keys():
                     d.__setattr__(kk, v[kk])
 
-        d.message_chain, d.message, d.colored_message = CQHTTPMessageHandler.format_message_chain(d.message)
+        d.message_chain, d.message, d.colored_message = OneBot11MessageHandler.format_message_chain(d.message)
         d.colored_message = d.colored_message if d.colored_message else '[未知消息]'
         if d.message_type == 'private':
             self.logger.info('%s(%s) [green]->[/green] %s' % (d.nickname, d.user_id, d.colored_message))

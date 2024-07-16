@@ -1,2 +1,1 @@
-from .cqhttp import *
-from .mirai import *
+from .onebot11 import *

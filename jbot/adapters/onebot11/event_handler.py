@@ -13,10 +13,10 @@ class Data:
 d = Data()
 
 
-class CQHTTPEventHandler:
+class OneBot11EventHandler:
     """
     > 说明
-        CQHTTP 事件处理器.
+        OneBot11 事件处理器.
     > 参数
         + adapter [Adapter]: 适配器对象
     """

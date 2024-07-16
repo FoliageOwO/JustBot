@@ -1,4 +1,4 @@
-from .elements import CQHTTPElement, Plain
+from .elements import OneBot11Element, Plain
 from ...contact import Friend, Group, Member
 from ... import HTTP_PROTOCOL
 
@@ -6,7 +6,7 @@ from aiohttp import request
 from typing import Union
 
 
-class CQHTTPUtils:
+class OneBot11Utils:
     def __init__(self, adapter) -> None:
         self.host = adapter.http_host
         self.port = adapter.http_port
@@ -47,8 +47,8 @@ class CQHTTPUtils:
     async def get_message_by_id(self, id: int) -> Union[dict, None]:
         return await self.request_api(f'/get_msg', data=True, params={'message_id': id})
 
-    def get_element(self, code: str) -> CQHTTPElement:
-        for element_class in CQHTTPElement.__subclasses__():
+    def get_element(self, code: str) -> OneBot11Element:
+        for element_class in OneBot11Element.__subclasses__():
             if element_class.__code__ == code:
                 return element_class
         return Plain

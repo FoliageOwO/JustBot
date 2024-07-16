@@ -8,10 +8,10 @@ from typing import Any, List, TypeVar, NewType
 from json import dumps, loads as json
 
 
-class CQHTTPElement(Element):
+class OneBot11Element(Element):
     """
     > 说明
-        CQHTTP 消息链元素.
+        OneBot11 消息链元素.
     """
     pass
 
@@ -19,7 +19,7 @@ class CQHTTPElement(Element):
 class Utils:
     """
     > 说明
-        CQHTTP 元素类中的工具类.
+        OneBot11 元素类中的工具类.
     """
 
     T = NewType('T', Any)
@@ -87,12 +87,12 @@ class Utils:
         return T_(mapping[key]) if key in mapping.keys() else default
 
     @staticmethod
-    def format_code(element: CQHTTPElement) -> str:
+    def format_code(element: OneBot11Element) -> str:
         """
         > 说明
-            将 ``CQHTTPElement 对象`` 转换成 CQ 码.
+            将 ``OneBot11Element 对象`` 转换成 CQ 码.
         > 参数
-            + element [CQHTTPElement]: 元素对象
+            + element [OneBot11Element]: 元素对象
         > 返回
             * str: 完整的 CQ 码
         > 示例
@@ -108,12 +108,12 @@ class Utils:
         return '[CQ:%s%s]' % (element.__code__, string)
 
     @staticmethod
-    def format_display(element: CQHTTPElement, ignore: List[str] = ()) -> str:
+    def format_display(element: OneBot11Element, ignore: List[str] = ()) -> str:
         """
         > 说明
-            将 ``CQHTTPElement 对象`` 转换成易读字符串.
+            将 ``OneBot11Element 对象`` 转换成易读字符串.
         > 参数
-            + element [CQHTTPElement]: 元素对象
+            + element [OneBot11Element]: 元素对象
             + ignore [list[str]]: 忽略转换时的某些参数 [可选]
         > 返回
             * str: 易读字符串
@@ -132,16 +132,16 @@ class Utils:
         return '[%s%s]' % (element.__type__ if is_element else '[red]ERROR[/red]', string if is_element else '')
 
     @staticmethod
-    def get_element_by_code(code: str) -> CQHTTPElement:
+    def get_element_by_code(code: str) -> OneBot11Element:
         """
         > 说明
-            将完整的 CQ 码 ``code`` 转换成 ``CQHTTPElement 对象``,
+            将完整的 CQ 码 ``code`` 转换成 ``OneBot11Element 对象``,
             如果该 ``code`` 暂未支持将会返回 ``Plain(code)``.
         > 参数
             + code [str]: 完整的 CQ 码
         > 返回
-            * CQHTTPElement[?]: 转换后的 ``CQHTTPElement`` 对象
-            * CQHTTPElement[Plain]: 未支持 CQ 码时的 ``Plain`` 对象
+            * OneBot11Element[?]: 转换后的 ``OneBot11Element`` 对象
+            * OneBot11Element[Plain]: 未支持 CQ 码时的 ``Plain`` 对象
         > 示例
             >>> foo = Utils.get_element_by_code('[CQ:foo,bar=1]')
             >>> foo
@@ -156,7 +156,7 @@ class Utils:
         """
 
         kwargs = Utils.to_mapping(Utils.remove_brackets(code))
-        elements = [i for i in CQHTTPElement.__subclasses__() if 'cqhttp' in str(i)]
+        elements = OneBot11Element.__subclasses__()
         try:
             key = Utils.remove_brackets(code).split(',')[0].split(':')[1]
             for element in elements:
@@ -183,16 +183,16 @@ class Utils:
         """
 
         name = Utils.remove_brackets(code).split(',')[0].split(':')[1]
-        element = TypeVar(name, bound=CQHTTPElement)
+        element = TypeVar(name, bound=OneBot11Element)
         return Utils.format_display(element)
 
     @staticmethod
-    def as_colored_display(element: CQHTTPElement) -> str:
+    def as_colored_display(element: OneBot11Element) -> str:
         """
         > 说明
-            将 ``CQHTTPElement 对象`` 转化为带有颜色的易读字符串.
+            将 ``OneBot11Element 对象`` 转化为带有颜色的易读字符串.
         > 参数
-            + element [CQHTTPElement]: CQHTTPElement 对象
+            + element [OneBot11Element]: OneBot11Element 对象
         > 返回
             * str: 带有颜色的易读字符串
         > 示例
@@ -205,23 +205,23 @@ class Utils:
         return ('[%s]%s[/%s]' % (color, element.as_display(), color)).replace('|', '[%s]|[/%s]' % (split_color, split_color))
 
     @staticmethod
-    def as_str(element: CQHTTPElement) -> str:
+    def as_str(element: OneBot11Element) -> str:
         """
         > 说明
-            将 ``CQHTTPElement 对象`` 转换为 ``<CQHTTPElement:{name}|{display}>`` 的格式.
+            将 ``OneBot11Element 对象`` 转换为 ``<OneBot11Element:{name}|{display}>`` 的格式.
         > 参数
-            + element [CQHTTPElement]: 元素对象
+            + element [OneBot11Element]: 元素对象
         > 返回
             * str: 转换后的字符串
         > 示例
             >>> Utils.as_str(Foo(bar=1))
-            '<CQHTTPElement:Foo|[Foo:1]>'
+            '<OneBot11Element:Foo|[Foo:1]>'
         """
 
-        return '<CQHTTPElement:%s|%s>' % (element.__class__.__name__, element.as_display())
+        return '<OneBot11Element:%s|%s>' % (element.__class__.__name__, element.as_display())
 
 
-class Plain(CQHTTPElement):
+class Plain(OneBot11Element):
     """
     > 说明
         纯文本, 支持多行.
@@ -253,7 +253,7 @@ class Plain(CQHTTPElement):
         return Utils.as_str(self)
 
 
-class Face(CQHTTPElement):
+class Face(OneBot11Element):
     """
     > 说明
         表情.
@@ -284,7 +284,7 @@ class Face(CQHTTPElement):
         return Utils.as_str(self)
 
 
-class At(CQHTTPElement):
+class At(OneBot11Element):
     """
     > 说明
         @ 某人.
@@ -316,7 +316,7 @@ class At(CQHTTPElement):
         return Utils.as_str(self)
 
 
-class Share(CQHTTPElement):
+class Share(OneBot11Element):
     """
     > 说明
         链接分享.
@@ -356,7 +356,7 @@ class Share(CQHTTPElement):
         return Utils.as_str(self)
 
 
-class Reply(CQHTTPElement):
+class Reply(OneBot11Element):
     """
     > 说明
         回复一个消息.
@@ -389,13 +389,13 @@ class Reply(CQHTTPElement):
 
     @property
     def message_chain(self) -> MessageChain:
-        from .message_handler import CQHTTPMessageHandler
+        from .message_handler import OneBot11MessageHandler
 
         data = BotApplication.coroutine(CONFIG.adapter.utils.get_message_by_id(self.message_id))
-        return CQHTTPMessageHandler.format_message_chain(data['message'])[0]
+        return OneBot11MessageHandler.format_message_chain(data['message'])[0]
 
 
-class Image(CQHTTPElement):
+class Image(OneBot11Element):
     """
     > 说明
         图片.
@@ -403,9 +403,6 @@ class Image(CQHTTPElement):
         + file [str]: 图片文件
         + url [str]: 图片的 URL [可选]
         + type [Optional[ImageType]]: 图片类型 [可选]
-        + subType [Optional[int]]: 图片子类型 [可选] (只出现在群聊)
-        + id [EffectType]: 秀图特效 ID [可选] (当 type 为 ImageType.SHOW 时有效)
-        + c [int]: 通过网络下载图片时的线程数 [可选]
     > 示例
         >>> Image(None, url='https://example.com/image.png')
         >>> Image('C:\\image.png')
@@ -417,48 +414,22 @@ class Image(CQHTTPElement):
             图片类型枚举类
 
             * FLASH => 闪照 => "flash"
-            * SHOW => 秀图 => "show"
             * NORMAL => 普通 => ""
         """
 
         FLASH = 'flash'
-        SHOW = 'show'
         NORMAL = ''
-
-    class EffectType(Enum):
-        """
-        > 说明
-            图片效果枚举类
-
-            * PUTONG => 普通 => 40000
-            * HUANYING => 幻影 => 40001
-            * DOUDONG => 抖动 => 40002
-            * SHENGRI => 生日 => 40003
-            * AINI => 爱你 => 40004
-            * ZHENGYOU => 征友 => 40005
-        """
-
-        PUTONG = 40000
-        HUANYING = 40001
-        DOUDONG = 40002
-        SHENGRI = 40003
-        AINI = 40004
-        ZHENGYOU = 40005
 
     __type__ = '图片'
     __code__ = 'image'
 
     def __init__(self, file: str, *,
                  url: str = None,
-                 type: ImageType = ImageType.NORMAL, subType: int = 0,
-                 id: EffectType = None, c: int = None) -> None:
+                 type: ImageType = ImageType.NORMAL, **kwargs) -> None:
         super().__init__()
         self.file = file if file != None else url
         self.url = url
         self.type = Image.ImageType(type).value
-        self.subType = subType
-        self.id = Image.EffectType(id).value if id != None else None # Image.EffectType.PUTONG.value
-        self.c = c
 
     def as_display(self) -> str:
         return Utils.format_display(self)
@@ -469,14 +440,13 @@ class Image(CQHTTPElement):
     @staticmethod
     def as_code_display(code: str) -> str:
         return Image(Utils.get(code, 'file'),
-                     url=Utils.get(code, 'url'), subType=Utils.get(code, 'subType', T_=int), type=Image.ImageType(Utils.get(code, 'type')),
-                     id=Image.EffectType(Utils.get(code, 'id', T_=int)), c=Utils.get(code, 'c', T_=int)).as_display()
+                     url=Utils.get(code, 'url'), type=Image.ImageType(Utils.get(code, 'type'))).as_display()
 
     def __str__(self) -> str:
         return Utils.as_str(self)
 
 
-class _Forward(CQHTTPElement):
+class _Forward(OneBot11Element):
     """
     > 说明
         合并转发. [仅接收] [接收非 CQ 码]
@@ -515,7 +485,7 @@ class _Forward(CQHTTPElement):
         return chain
 
 
-class Poke(CQHTTPElement):
+class Poke(OneBot11Element):
     """
     > 说明
         戳一戳. [仅群聊]
@@ -546,7 +516,7 @@ class Poke(CQHTTPElement):
         return Utils.as_str(self)
 
 
-class JSON(CQHTTPElement):
+class JSON(OneBot11Element):
     """
     > 说明
         JSON 消息.
@@ -598,7 +568,7 @@ class JSON(CQHTTPElement):
         return Utils.as_str(self)
 
 
-class Music(CQHTTPElement):
+class Music(OneBot11Element):
     """
     > 说明
         音乐分享. [仅发送]

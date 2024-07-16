@@ -3,25 +3,17 @@
 ## 初始化 `BotApplication`
 
 ```python
-from jbot import BotApplication
-from jbot.adapters.cqhttp import CQHTTPConfig, CQHTTPAdapter
-
-config = CQHTTPConfig(ws_host='127.0.0.1', ws_port=6700,
-                      http_host='127.0.0.1', http_port=5700, ws_reverse=False)
+config = OneBot11Config(ws_host='127.0.0.1', ws_port=6700,
+                        http_host='127.0.0.1', http_port=5700, ws_reverse=False)
 # 或直接默认配置
-# config = CQHTTPConfig()
-adapter = CQHTTPAdapter(config)
-
+# config = OneBot11Config()
+adapter = OneBot11Adapter(config)
 app = BotApplication(adapter)
 ```
 
 ## 注册监听器
 
 ```python
-from jbot.events.message_events import MessageEvent, PrivateMessageEvent, GroupMessageEvent
-from jbot.utils.message_chain import MessageChain
-from jbot.adapters.cqhttp.elements import Plain
-
 @app.on([PrivateMessageEvent, GroupMessageEvent])
 async def message_handler(event: MessageEvent, **kwargs):
     await app.send_msg(event.receiver, 'Hello, World!')
@@ -37,8 +29,6 @@ await app.send_msg(contact, 'hello world') # 单个文字式
 ## 更多元素
 
 ```python
-from jbot.adapters.cqhttp.elements import Plain, Face, Share
-
 MessageChain.create([
     Plain('Hello, World!', '还可以有第二行!'),
     Face(138),
@@ -49,8 +39,6 @@ MessageChain.create([
 ## 关键词匹配器 & 命令匹配器
 
 ```python
-from jbot.matchers import KeywordsMatcher, CommandMatcher
-
 @app.matcher(KeywordsMatcher(['你好', 'hello'])) # 关键词匹配
 @app.on(PrivateMessageEvent)
 async def keywords_handler(event: PrivateMessageEvent, **kwargs):
@@ -67,8 +55,6 @@ async def command_handler(event: PrivateMessageEvent, parameters: list or dict, 
 ## 权限组限定
 
 ```python
-from jbot.utils.role import Role
-
 @app.role([Role.ADMIN, Role.OWNER]) # 只允许管理员和群主执行此命令
 @app.matcher(CommandMatcher('~dosomething'))
 @app.on(GroupMessageEvent)

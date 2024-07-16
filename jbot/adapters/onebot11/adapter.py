@@ -1,7 +1,7 @@
-from .config import CQHTTPConfig
-from .utils import CQHTTPUtils
-from .message_handler import CQHTTPMessageHandler
-from .event_handler import CQHTTPEventHandler
+from .config import OneBot11Config
+from .utils import OneBot11Utils
+from .message_handler import OneBot11MessageHandler
+from .event_handler import OneBot11EventHandler
 from ...apis import Adapter
 from ...utils import Logger, MessageChain
 from ...contact import Friend, Group
@@ -21,30 +21,30 @@ nest_asyncio.apply()
 install()
 
 
-class CQHTTPAdapter(Adapter):
+class OneBot11Adapter(Adapter):
     """
     > 说明
-        CQHTTP 适配器.
+        OneBot11 适配器.
     > 参数
-        + config [CQHTTPConfig]: 适配器对应的配置对象
+        + config [OneBot11Config]: 适配器对应的配置对象
     """
-    def __init__(self, config: CQHTTPConfig) -> None:
-        self.name = 'CQHTTP'
+    def __init__(self, config: OneBot11Config) -> None:
+        self.name = 'OneBot11'
         self.ws_host = config.ws_host
         self.ws_port = config.ws_port
         self.http_host = config.http_host
         self.http_port = config.http_port
         self.ws_reverse = config.ws_reverse
         self.logger = Logger('Adapter/[bold magenta]%s[/bold magenta]' % self.name)
-        self.utils = CQHTTPUtils(self)
-        self.message_handler = CQHTTPMessageHandler(self)
-        self.event_handler = CQHTTPEventHandler(self)
+        self.utils = OneBot11Utils(self)
+        self.message_handler = OneBot11MessageHandler(self)
+        self.event_handler = OneBot11EventHandler(self)
         self.websocket = None
 
     @overrides
     async def check(self) -> None:
         if not (await self._request_api('/get_status'))['online']:
-            raise ConnectionError('尝试连接 CQHTTP 时返回了一个错误的状态, 请尝试重启 CQHTTP!')
+            raise ConnectionError('尝试连接到 OneBot11 服务时返回了一个错误的状态, 请尝试重启机器人服务!')
 
     @overrides
     async def _request_api(self, api_path: str) -> dict:
@@ -52,7 +52,7 @@ class CQHTTPAdapter(Adapter):
             async with request('GET', '%s%s:%s%s' % (HTTP_PROTOCOL, self.http_host, self.http_port, api_path)) as response:
                 return (await response.json())['data']
         except ClientConnectorError:
-            raise ConnectionError('无法连接到 CQHTTP 服务, 请检查是否配置完整!')
+            raise ConnectionError('无法连接到 OneBot11 服务, 请检查是否配置完整!')
 
     @property
     async def login_info(self) -> dict:
