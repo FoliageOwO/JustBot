@@ -5,7 +5,7 @@
 ![](https://img.shields.io/github/license/WindLeaf233/JustBot)
 ![](https://img.shields.io/badge/made%20with-%E2%9D%A4-important)
 
-A lightweight asynchronous QQ bot framework.
+一个轻量的异步 QQ 机器人框架
 
 ---
 
