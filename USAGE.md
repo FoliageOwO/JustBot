@@ -39,16 +39,17 @@ MessageChain.create([
 ## 关键词匹配器 & 命令匹配器
 
 ```python
-@app.matcher(KeywordsMatcher(['你好', 'hello'])) # 关键词匹配
+@app.matcher(KeywordMatcher(['你好', 'hello'])) # 关键词匹配
 @app.on(PrivateMessageEvent)
 async def keywords_handler(event: PrivateMessageEvent, **kwargs):
     await event.reply('你好呀！') # 支持快速回复
 
-@app.matcher(CommandMatcher(['~hello'], # 匹配命令 `~hello`
+@app.matcher(CommandMatcher(['!hello'], # 匹配命令 `!hello`
              match_all_width=True)) # 允许半角和全角  如 `!hello` 和 `！hello` 都可触发)
-@app.param_convert(dict) # 命令参数转换  如 `!hello world=1` 可以转成 {'world': 1}
+@app.param_convert(dict) # 命令参数转换  如 `!hello world=1` 可以转成 {'world': '1'}
 @app.on(PrivateMessageEvent)
-async def command_handler(event: PrivateMessageEvent, parameters: list or dict, **kwargs):
+async def command_handler(event: PrivateMessageEvent, **kwargs):
+    world = kwargs.get('world') or ''
     await event.reply('hello from command~')
 ```
 
